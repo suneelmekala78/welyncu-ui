@@ -1,0 +1,137 @@
+.topnav-section {
+  width: 100vw;
+  height: 55px;
+  background-color: #1d2f38;
+  color: #bec3c6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topnav-feild {
+  width: 1100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: auto;
+}
+
+.topnav-logo {
+  width: 35px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.topnav-logo img {
+  width: 100%;
+  border-radius: 2px;
+  object-fit: cover;
+}
+
+.topnav-left,
+.topnav-search-feild {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topnav-search-feild {
+  margin-left: 5px;
+  background-color: #132028;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.topnav-search-feild i {
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.topnav-search-feild input {
+  background: transparent;
+  outline: none;
+  border: none;
+  color: #fff;
+  width: 200px;
+}
+
+/*--- Right ---*/
+.topnav-right .topnav-right-list,
+.topnav-right-list .topnav-right-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.topnav-right .topnav-right-list a {
+  color: #bec3c6;
+}
+
+.topnav-right-list-item {
+  margin: 0 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.topnav-right .topnav-right-list a:hover,
+.topnav-right-list-item:hover {
+  color: #fff;
+}
+
+.topnav-right-list-item i {
+  margin-right: 8px;
+}
+
+.topnav-icon-feild {
+  position: relative;
+}
+
+.topnav-icon-feild p {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  font-size: 9px;
+  padding: 1.5px 5px;
+  background-color: red;
+  border-radius: 50%;
+}
+
+.topnav-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/*==== Mobile Nav ====*/
+
+.mobile-nav {
+  width: 100vw;
+  height: 55px;
+  background-color: #1d2f38;
+  color: #bec3c6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  display: none;
+}
+
+.mobile-nav .topnav-right a {
+  color: #bec3c6;
+}
+
+
+/*======== Responsive ==========*/
+
+@media (max-width: 1100px) {
+  .topnav-section {
+    width: 1100px;
+  }
+  .topnav-feild{
+    margin: 0 10px;
+  }
+}

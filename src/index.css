@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+
+:root{
+  /*--- Texts ---*/
+  --main-text: 32px;
+  --second-text: 22px;
+  --third-text: 12px;
+
+  /*--- Colors ---*/
+  --main-color: #fff;
+  --second-color: #fff;
+  --third-color: #fff;
+
+  /*--- Designs ---*/
+  --main-shadow: #fff;
+  --second-shadow: #fff;
+  --box-shadow: 0 6px 22px 0 rgba(0, 0, 0, 0.08);
+
+  /*---- Stock colors ----*/
+  --blue: #007bff;
+  --indigo: #6610f2;
+  --purple: #6f42c1;
+  --pink: #e83e8c;
+  --red: #dc3545;
+  --orange: #fd7e14;
+  --yellow: #ffc107;
+  --green: #28a745;
+  --teal: #20c997;
+  --cyan: #17a2b8;
+  --white: #fff;
+  --gray: #6c757d;
+  --gray-dark: #343a40;
+  --primary: #007bff;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --info: #17a2b8;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --light: #f8f9fa;
+  --dark: #343a40;
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --font-family-ubuntu: "Ubuntu", sans-serif;
+  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/*--- Decorations ---*/
+a{
+  text-decoration: none;
+}
+
+li{
+  list-style: none;
+}
+
+/*-- Stock Designs --*/
+.button1{
+ padding: 10px;
+}
+
+.button2{
+  padding: 10px;
+}
+
+.box-shadow{
+  box-shadow: 0 6px 22px 0 rgba(0, 0, 0, 0.08);
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.btn-background{
+  color: #fff;
+  background: linear-gradient(90deg, rgba(0,128,254,1) 35%, rgba(0,199,229,1) 100%);
+}
+
+.link{
+  color: var(--blue);
+  cursor: pointer;
+}
+
+.card-title, .card-details{
+  padding: 15px;
+}
+
+.card-title{
+  color: var(--blue);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.card-details{
+  border-top: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+/* .text-primary {
+  color: #007bff !important;
+} */
+
+.p-15{
+  padding: 15px;
+}
+
+.mt-10{
+  margin-top: 10px;
+}
+
+.mb-10{
+  margin-bottom: 10px;
+}
+
+.p-10{
+  padding: 10px;
+}
+
+.mr-0{
+  margin-right: 0;
+}
+
+.more-btn{
+  position: relative;
+}
+
+.more-container{
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 35px;
+  right: 0;
+  z-index: 10;
+  border: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.more-container-active{
+  display: flex;
+}
+
+.more-container .more-item{
+  color: #808080;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+.more-container .more-item i{
+  font-size: 13px;
+  margin-right: 5px;
+}
+
+.more-container .more-item:hover{
+  color: var(--blue);
+}
+
+.cp{
+  cursor: pointer;
+}
+
+.custom-pre, textarea{
+  font-family: var(--font-family-sans-serif);
+  white-space: pre-wrap;   /* Preserve newlines and breaks */
+  word-wrap: break-word;   /* Break long words and wrap text to fit */
+  word-break: break-word;  /* Ensures words break within container */
+  overflow-wrap: break-word;
+}

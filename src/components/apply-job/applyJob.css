@@ -1,0 +1,47 @@
+.apply-job-container {
+  width: 800px;
+  margin: 10rem auto;
+  overflow-y: scroll;
+}
+
+.apply-job-title {
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--blue);
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.apply-job-container i {
+  float: right;
+  cursor: pointer;
+}
+
+/*-- Main ---*/
+.apply-job-contact-section-top {
+  padding: 15px 0;
+  display: flex;
+}
+
+.apply-job-contact-section-top img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.apply-job-contact-section-top .user-name,
+.apply-job-resumes-title {
+  font-weight: 500;
+}
+
+.apply-job-contact-section-top .role,
+.apply-job-contact-section-top .location {
+  font-size: 13px;
+  color: #808080;
+}
+
+.apply-job-all-resumes {
+  display: flex;
+  flex-wrap: wrap;
+}

@@ -1,0 +1,48 @@
+.create-page-page{
+    width: 1100px;
+    margin: 50px auto;
+}
+
+.create-page-page .create-page-select-section{
+    text-align: center;
+}
+
+.create-page-select-section-bottom{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 50px 0;
+}
+
+.create-page-select-section-bottom .create-page-select-box{
+    width: 250px;
+    margin: 10px;
+}
+
+.create-page-select-section-bottom .create-page-select-box:hover{
+    background-color: #edf6ff;
+    border: 1px solid var(--blue);
+    border-radius: 5px;
+}
+
+.create-page-select-box-top{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+}
+
+.create-page-select-box-top img{
+    width: 50px;
+}
+
+.create-page-select-box-bottom{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+}
+
+/*=== Page Details ===*/
+.create-page-create-section{
+    padding: 5px;
+}

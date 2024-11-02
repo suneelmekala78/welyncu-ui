@@ -1,0 +1,309 @@
+.resumes-page{
+    width: 1100px;
+    margin: 15px auto;
+}
+
+.resumes-top{
+    margin: 40px 10px;
+}
+
+.all-resumes{
+    margin: 40px 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.resumes-top .resumes-title{
+    margin-bottom: 0;
+}
+
+.add-resume-box, .resume-box{
+    width: 250px;
+    height: 300px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+    background-color: rgba(128, 128, 128, 0.3);
+}
+
+.add-resume-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resume-box-top{
+    width: 100%;
+    height: 85%;
+}
+
+.resume-box-top img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 5px;
+}
+
+.resume-box-bottom{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    color: white;
+    font-weight: 500;
+}
+
+
+/*==== Edit Resume ====*/
+.edit-resume-page{
+    width: 1100px;
+    margin: 15px auto;
+    display: flex;
+}
+
+.edit-resume-left, .edit-resume-right{
+    width: 50%;
+    margin: 10px;
+}
+
+.editing-resume-top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.editing-resume-top-left .editing-resume-top-btns{
+    display: flex;
+    align-items: center;
+}
+
+.resume-btn{
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.editing-resume-theme{
+    background-color: white;
+    border: 1px solid rgb(68, 67, 67);
+}
+
+.pre-btn{
+    background-color: white;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+}
+
+.nxt-btn{
+    border: 1px solid var(--blue);
+    margin-left: 10px;
+}
+
+/*--- Personal Details ---*/
+.personal-details-card{
+    background-color: var(--blue) !important;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.pdt{
+    height: 5px;
+}
+
+.personal-details-form{
+    border-radius: 5px;
+    background-color: white;
+}
+
+.personal-details-titles h2, .personal-details-titles p{
+    margin: 0;
+}
+
+.personal-details-titles h2{
+    color: black;
+}
+
+.personal-details-titles{
+    margin-bottom: 10px;
+}
+
+.personal-details-titles p{
+    font-size: 14px;
+}
+
+.resume-bottom-btns{
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.personal-inputs{
+    display: flex;
+    flex-direction: column;
+}
+
+.personal-inputs .personal-flex-inputs{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.personal-inputs .personal-flex-inputs > .personal-input{
+    width: 49%;
+}
+
+.personal-input{
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+}
+
+.personal-input label{
+    font-weight: 500;
+}
+
+.personal-input input{
+    padding: 8px;
+    border-radius: 5px;
+    border: 2px solid rgba(128, 128, 128, 0.3);
+    outline: none;
+}
+
+/*--- Experience Btns ---*/
+.experience-bottom-btns{
+    display: flex;
+    align-items: center;
+}
+
+.experience-bottom-btns .exp-btn{
+    padding: 5px 10px;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    border-radius: 5px;
+    margin-right: 5px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/*--- Skills ---*/
+.skill-rating{
+    display: flex;
+    align-items: center;
+}
+
+.skill-rating i{
+    font-size: 18px;
+    color: var(--blue);
+}
+
+
+
+
+/*=== Result Resume ===*/
+.result-resume-section{
+    background-color: var(--blue);
+    font-size: 13px;
+}
+
+.main-result-resume{
+    background-color: white;
+}
+
+.main-resume-top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgb(176, 217, 253);
+}
+
+.main-resume-top-left h2, .main-resume-top-left p{
+    margin: 0;
+}
+
+.main-resume-top-left h2{
+    font-size: 23px;
+    color: var(--blue);
+}
+
+.main-resume-top-left p{
+    font-size: 13px;
+}
+
+.main-resume-email{
+    font-size: 10px;
+    margin: 4px 0;
+}
+
+.main-resume-email i{
+    color: var(--blue);
+}
+
+.mr-sec{
+    padding: 5px 0;
+}
+
+.mr-sec h3{
+    margin: 8px 0;
+    color: var(--blue);
+}
+
+.mr-desc{
+    border-top: 1px solid rgb(176, 217, 253);
+}
+
+.mr-desc p{
+    margin: 2px 0;
+}
+
+.edu-details{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+.edu-details-left{
+    display: flex;
+    flex-direction: column;
+}
+
+.edu-details-left b{
+    font-weight: 600;
+}
+
+.edu-details-right{
+    font-size: 10px;
+}
+
+
+
+
+/*=== View Resume ===*/
+.view-resume-page{
+    width: 900px;
+    margin: 15px auto;
+    text-align: center;
+}
+
+.view-resume-btns{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.view-resume-btn{
+    padding: 6px 10px;
+    background-color: var(--blue);
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.view-resume-page > .result-resume-section{
+    text-align: start;
+    margin: 40px 0;
+}

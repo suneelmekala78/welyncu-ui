@@ -1,0 +1,151 @@
+.game-box {
+  width: 250px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+  background-color: rgba(128, 128, 128, 0.3);
+  overflow: hidden;
+}
+
+.game-box-top img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.game-box-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  color: white;
+  font-weight: 500;
+}
+
+/*=== Tic Toc Toe ===*/
+.tic-toc-toe-page {
+  height: 100vh;
+  background-color: #111b22;
+  color: white;
+}
+
+.tic-toc-toe-section {
+  width: 1100px;
+  margin: 15px auto;
+  text-align: center;
+}
+
+.tic-toc-toe-section-top h1 {
+  font-size: 40px;
+}
+
+.tic-toc-toe-section-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 50px 0;
+}
+
+.boxes {
+  display: flex;
+}
+
+.boxes .boxes-row .box {
+  width: 100px;
+  height: 100px;
+  background-color: #223541;
+  margin: 4px 2px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.boxes .boxes-row .box img {
+  width: 80px;
+  height: 80px;
+}
+
+.play-again-btn{
+    padding: 15px 20px;
+    outline: none;
+    color: #62f7c7;
+    background-color: #223541;
+    cursor: pointer;
+    border-radius: 30px;
+    border: none;
+    margin-top: 50px;
+}
+
+.player-card{
+    min-width: 200px;
+    background-color: #223541;
+    border-radius: 5px;
+}
+
+.player-card .player-card-top .titles{
+    display: flex;
+    text-align: start;
+    flex-direction: column;
+}
+
+.player-card .player-card-top .titles span{
+    font-size: 10px;
+    color: #62f7c7;
+}
+
+.player-card .player-card-top{
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid #111b22;
+}
+
+.player-card .player-card-bottom{
+    padding: 15px;
+}
+
+.player-card .player-card-top img{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+
+/*==== PopUp =====*/
+
+.all-friends-sec .inv-friend{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(128, 128, 128, 0.2);
+  padding: 10px;
+}
+
+.all-friends-sec .inv-friend:hover{
+  background-color: rgba(0, 145, 255, 0.1);
+}
+
+.all-friends-sec .inv-friend .inv-friend-left{
+  display: flex;
+  align-items: center;
+}
+
+.all-friends-sec .inv-friend .inv-friend-left img{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.all-friends-sec .inv-friend .inv-friend-left .inv-friend-left-details{
+  display: flex;
+  flex-direction: column;
+}
+
+.all-friends-sec .inv-friend .inv-friend-right input{
+  width: 30px;
+  height: 30px;
+}

@@ -1,0 +1,103 @@
+.terms-conditions-page {
+  background-color: #ffffff;
+}
+
+.tc-page {
+  width: 1100px;
+  margin: 15px auto;
+  display: flex;
+  color: #888da8;
+}
+
+.tc-left {
+  width: 75%;
+  margin: 10px 0;
+  padding: 0 10px;
+}
+
+.tc-right {
+  width: 25%;
+  margin: 10px;
+}
+
+/*--- Left ---*/
+.tc-page .tc-left .tcl-top {
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.tc-page .tc-left .tcl-top .tcl-top-title {
+  color: #007bff;
+  font-weight: 400;
+  margin: 0;
+  font-size: 40px !important;
+}
+
+.tc-left .tcl-top .tcl-top-title span {
+  font-weight: 700;
+}
+
+.tcl-top-text {
+  font-size: 14px;
+}
+
+.tcl-bottom {
+  margin: 3rem 0;
+}
+
+.tcl-bottom .tcl-bottom-section {
+  margin-bottom: 30px;
+}
+
+.tcl-bottom .tcl-bottom-section .tclbs-title {
+  color: #212529;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.tcl-bottom .tcl-bottom-section .tclbs-text {
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.p-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.terms-conditions-page
+  .tc-page
+  .tc-left
+  .tcl-bottom
+  .tcl-bottom-section
+  .tclbs-text
+  li {
+  padding: 10px 0;
+}
+
+/*--- Right ---*/
+.tcr-box {
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  border-radius: 5px;
+}
+
+.tc-right .tcr-title,
+.tc-right .tcr-list-item {
+  padding: 15px;
+}
+
+.tc-right .tcr-title {
+  font-weight: 500;
+  color: #212529;
+}
+
+.tc-right .tcr-list-item {
+  border-top: 1px solid rgba(128, 128, 128, 0.2);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.tc-right .tcr-list-item:hover {
+  background-color: #f8f9fa;
+}

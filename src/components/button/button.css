@@ -1,0 +1,29 @@
+.button-section {
+  margin: 10px 0;
+  padding: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 128, 254, 1) 35%,
+    rgba(0, 199, 229, 1) 100%
+  );
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.button-section:hover {
+  background: rgb(1, 117, 234);
+}
+
+.button-sending {
+  margin: 10px 0;
+  padding: 10px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  outline: none;
+  pointer-events: none;  /* Prevents clicking */
+  opacity: 0.6;          /* Makes the button look disabled */
+  cursor: not-allowed;   /* Changes the cursor to a "not allowed" symbol */
+}

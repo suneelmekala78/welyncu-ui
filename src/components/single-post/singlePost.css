@@ -1,0 +1,136 @@
+.single-post-page {
+  width: 1100px;
+  display: flex;
+  margin: 15px auto;
+}
+
+.single-post-page .single-post-left {
+  width: 70%;
+  margin-right: 10px;
+}
+
+.single-post-page .single-post-right {
+  width: 30%;
+}
+
+.single-post-left-top-section {
+  width: 100%;
+}
+
+.single-post-left-top-section video {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.single-post-left-top-section .single-post-details h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.single-post-inputs{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.single-post-inputs .single-post-inputs-left{
+    display: flex;
+    align-items: center;
+}
+
+.single-post-inputs .single-post-inputs-right .single-post-inputs-right-reactions{
+    display: flex;
+}
+
+.single-post-inputs-left img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.single-post-inputs .single-post-inputs-left .single-post-inputs-left-texts{
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+}
+
+.single-post-inputs-left button{
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+.single-post-inputs .single-post-inputs-left .single-post-inputs-left-texts span{
+    font-size: 10px;
+}
+
+.single-post-inputs-right-reaction{
+    margin-left: 20px;
+    padding: 10px 15px;
+    cursor: pointer;
+    background-color: rgba(179, 210, 253, 0.2);
+    border-radius: 30px;
+}
+
+.single-post-description-top span{
+    font-size: 13px;
+    margin-right: 10px;
+}
+
+.single-post-similar-posts-title{
+  margin: 0;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.250);
+}
+
+.single-post-similar-posts .all-courses .course{
+  width: 235px;
+}
+
+/*------*/
+
+.comment{
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.comment .comment-top{
+  display: flex;
+}
+
+.comment .comment-top span{
+  font-size: 13px;
+  color: #808080;
+}
+
+.comment .comment-top img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.comment .comment-top .commenter-details{
+  display: flex;
+  flex-direction: column;
+}
+
+.comment .comment-text{
+  font-size: 13px;
+  color: #808080;
+  margin-top: 5px;
+}
+
+.comment .comment-reactions{
+  display: flex;
+  margin: 10px 0 0 0;
+}
+
+.comment .comment-reactions .comment-reaction{
+  font-size: 12px;
+  margin-right: 10px;
+  cursor: pointer;
+}
