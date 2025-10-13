@@ -104,7 +104,6 @@ const Profile = () => {
         url: "/user/add-about",
         data: { about, userId: user?._id },
         method: "POST",
-        token,
       });
 
       if (res?.status === "success") {

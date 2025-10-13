@@ -146,7 +146,7 @@ function App() {
           <Route path="/game/tictactoe" element={<TicTocToe />} />
         </Route>
 
-        <Route path="/terms&conditions" element={<TC />} />
+        <Route path="/terms-conditions" element={<TC />} />
         <Route path="*" element={<PageNotFound />} />
 
         {invitation && <RespondInvite />}

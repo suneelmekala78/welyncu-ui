@@ -29,7 +29,7 @@ const FriendsCard = () => {
             <div className="friends-card-friend" key={index}>
               <span>
                 <div className="friends-card-friend-img">
-                  <img src={frd?.profileUrl} alt="profile-pic" />
+                  <img src={frd?.profileUrl || "https://media.licdn.com/dms/image/v2/D5603AQGuDYgKvZkiBQ/profile-displayphoto-shrink_800_800/B56Zbx5MDoH0Ag-/0/1747815023369?e=1762992000&v=beta&t=saGrbIn_ggVk8Y11sd3HUVk38BiLvs60UD2zEgIJ_RA"} alt="profile-pic" />
                 </div>
                 <Link
                   to={`/profile/${frd?._id}`}

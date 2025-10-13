@@ -1,6 +1,6 @@
 import React from "react";
 
-const JobApplicantsTop = () => {
+const JobApplicantsTop = ({view,setView}) => {
   return (
     <div className="job-applicants-top-section">
       <div className="job-applicants-top-left">
@@ -32,7 +32,7 @@ const JobApplicantsTop = () => {
           <span>
             <i className="fa fa-ellipsis"></i>
           </span>
-          <span className="view-btn">View Details</span>
+          <span className="view-btn" onClick={()=> setView(!view)}>View Details</span>
         </div>
       </div>
     </div>

@@ -16,7 +16,7 @@ const PostCard = ({ post, getPosts }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const maxLines = 2;
   const videoRefs = useRef([]);
-
+  
   const handleToggle = () => {
     setIsExpanded((prev) => !prev);
   };

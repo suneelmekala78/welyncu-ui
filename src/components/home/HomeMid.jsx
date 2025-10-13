@@ -15,6 +15,9 @@ const HomeMid = ({ setStoryView, user }) => {
   const [allPosts, setAllPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log(allPosts);
+  
+
   const getPosts = async () => {
     setIsLoading(true);
     try {

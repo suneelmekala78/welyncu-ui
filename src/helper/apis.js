@@ -29,7 +29,7 @@ export const apiRequest = async ({ url, data, method }) => {
 
 export const logoutUser = async () => {
   try {
-    const res = await apiRequest({
+    await apiRequest({
       url: "/auth/logout",
       method: "POST",
     });
@@ -97,7 +97,7 @@ export const deletePost = async (id, dispatch) => {
   }
 };
 
-export const getLoggedinUser = async () => {
+export const getLoggedinUser = async (dispatch) => {
   try {
     const uri = "/user/get-current-user";
     const res = await apiRequest({
@@ -123,7 +123,7 @@ export const getLoggedinUser = async () => {
   }
 };
 
-export const getUsers = async () => {
+export const getUsers = async (dispatch) => {
   try {
     const uri = "/user/users/";
     const res = await apiRequest({
@@ -175,7 +175,7 @@ export const getUserInfo = async (id, dispatch) => {
   }
 };
 
-export const getConversations = async (id) => {
+export const getConversations = async (id, dispatch) => {
   try {
     const uri = id === undefined ? "/conversation/" : "/conversation/" + id;
     const res = await apiRequest({
@@ -199,7 +199,7 @@ export const getConversations = async (id) => {
   }
 };
 
-export const getMessages = async (id) => {
+export const getMessages = async (id, dispatch) => {
   try {
     const uri = id === undefined ? "/message/" : "/message/" + id;
     const res = await apiRequest({
@@ -223,7 +223,7 @@ export const getMessages = async (id) => {
   }
 };
 
-export const sendMessage = async (data) => {
+export const sendMessage = async (data, dispatch) => {
   try {
     const uri = "/message/create";
     const res = await apiRequest({

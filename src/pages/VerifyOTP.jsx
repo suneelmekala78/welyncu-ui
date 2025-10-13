@@ -49,6 +49,8 @@ const VerifyOTP = () => {
       setOtp(pastedData.slice(0, otp.length));
     }
   };
+  
+  // localStorage.setItem("currentwelyncusermail", "ajayabbireddy127@gmail.com");
 
   // Handle form submission
   const onSubmit = async (e) => {
