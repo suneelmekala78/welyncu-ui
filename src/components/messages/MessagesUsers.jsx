@@ -1,7 +1,14 @@
 import React from "react";
 import UserBox from "./UserBox";
 
-const MessagesUsers = ({ conversations, userId, token, setCurrentChat }) => {
+const MessagesUsers = ({
+  conversations,
+  userId,
+  currentChatId,
+  onlineUsers,
+  setCurrentChat,
+  setCurrentChatUser,
+}) => {
   
   return (
     <div className="messages-users-section">
@@ -17,9 +24,13 @@ const MessagesUsers = ({ conversations, userId, token, setCurrentChat }) => {
             <UserBox
               con={con}
               userId={userId}
-              token={token}
               key={index}
+              isOnline={onlineUsers?.includes(
+                con?.members?.find((member) => member !== userId)
+              )}
+              isActive={currentChatId === con?._id}
               setCurrentChat={setCurrentChat}
+              setCurrentChatUser={setCurrentChatUser}
             />
           ))
         ) : (

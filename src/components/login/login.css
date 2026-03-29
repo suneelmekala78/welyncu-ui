@@ -137,3 +137,25 @@
     height: 15px;
     cursor: pointer;
 }
+
+/*========== Auth Responsive ==============*/
+@media (max-width: 480px) {
+  .register-page {
+    width: 90vw;
+    max-width: 350px;
+  }
+  .auth-sm-links {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .auth-sm-links .auth-sm-link-box {
+    padding: 0 20px;
+    width: 100%;
+    justify-content: center;
+  }
+  .auth-redirects {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}

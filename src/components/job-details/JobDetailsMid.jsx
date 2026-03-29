@@ -2,11 +2,11 @@ import React from 'react'
 import JobDetailsOverview from './JobDetailsOverview'
 import JobDetailsDesc from './JobDetailsDesc'
 
-const JobDetailsMid = () => {
+const JobDetailsMid = ({ job }) => {
   return (
     <div className='job-details-mid-section'>
-        <JobDetailsOverview/>
-        <JobDetailsDesc/>
+        <JobDetailsOverview job={job} />
+        <JobDetailsDesc job={job} />
     </div>
   )
 }

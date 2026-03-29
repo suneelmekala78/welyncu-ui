@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import UploadPost from "./UploadPost";
 import PostCard from "../posts/PostCard";
+import PollCard from "../posts/PollCard";
+import PollCreate from "../posts/PollCreate";
 import AllStories from "../stories/AllStories";
 import PostUpload from "../posts/PostUpload";
 import { useEffect } from "react";
@@ -8,15 +10,13 @@ import { fetchPosts } from "../../helper/apis";
 import { useDispatch } from "react-redux";
 import Loader from "../loaders/Loader";
 
-const HomeMid = ({ setStoryView, user }) => {
+const HomeMid = ({ setStoryView, setActiveStoryGroup, user }) => {
   const dispatch = useDispatch();
 
   const [startPost, setStartPost] = useState(false);
+  const [showPollCreate, setShowPollCreate] = useState(false);
   const [allPosts, setAllPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  console.log(allPosts);
-  
 
   const getPosts = async () => {
     setIsLoading(true);
@@ -38,11 +38,11 @@ const HomeMid = ({ setStoryView, user }) => {
     <>
       <div className="home-mid-section">
         <div className="all-stories mb-10">
-          <AllStories setStoryView={setStoryView} />
+          <AllStories setStoryView={setStoryView} setActiveStoryGroup={setActiveStoryGroup} />
         </div>
 
         <div className="post-upload-feild box-shadow">
-          <UploadPost user={user} setStartPost={setStartPost} />
+          <UploadPost user={user} setStartPost={setStartPost} setShowPollCreate={setShowPollCreate} />
         </div>
 
         {isLoading ? (
@@ -52,7 +52,11 @@ const HomeMid = ({ setStoryView, user }) => {
         ) : allPosts?.length > 0 ? (
           allPosts?.map((post, index) => (
             <div className="post box-shadow" key={index}>
-              <PostCard getPosts={getPosts} post={post} />
+              {post?.postType === "poll" ? (
+                <PollCard getPosts={getPosts} post={post} />
+              ) : (
+                <PostCard getPosts={getPosts} post={post} />
+              )}
             </div>
           ))
         ) : (
@@ -61,6 +65,7 @@ const HomeMid = ({ setStoryView, user }) => {
       </div>
 
       {startPost && <PostUpload setStartPost={setStartPost} />}
+      {showPollCreate && <PollCreate setShowPollCreate={setShowPollCreate} onCreated={getPosts} />}
     </>
   );
 };

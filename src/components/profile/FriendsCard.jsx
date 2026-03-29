@@ -1,24 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { getUsers } from "../../helper/apis";
+import { getUsers, apiRequest, getLoggedinUser } from "../../helper/apis";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import AllFrdsSuggesions from "./AllFrdsSuggesions";
 
 const FriendsCard = () => {
   const [viewAll, setViewAll] = useState(false);
   const [suggesions, setSuggesions] = useState([]);
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await getUsers();
-        setSuggesions(res);
-      } catch (error) {
-        console.error("Error fetching users:", error);
+  const refresh = async () => {
+    const [users, me] = await Promise.all([getUsers(), getLoggedinUser()]);
+    setSuggesions(users || []);
+    setLoggedInUser(me);
+  };
+
+  useEffect(() => { refresh(); }, []);
+
+  const handleConnect = async (targetUserId) => {
+    try {
+      const isPending = loggedInUser?.sendedConnectionRequests?.includes(targetUserId);
+      const isConnected = loggedInUser?.connections?.includes(targetUserId);
+      if (isConnected) return;
+      if (isPending) {
+        const res = await apiRequest({ url: "/user/withdraw-connection-requist", data: { targetUserId }, method: "POST" });
+        if (res?.status === "success") { toast.success(res?.message); refresh(); } else toast.error(res?.message);
+      } else {
+        const res = await apiRequest({ url: "/user/send-connection-requist", data: { targetUserId }, method: "POST" });
+        if (res?.status === "success") { toast.success(res?.message); refresh(); } else toast.error(res?.message);
       }
-    };
+    } catch (error) { console.log(error); }
+  };
 
-    fetchUsers();
-  }, []);
+  const getConnectLabel = (frdId) => {
+    if (loggedInUser?.connections?.includes(frdId)) return { icon: "fa fa-user-check", label: "Connected" };
+    if (loggedInUser?.sendedConnectionRequests?.includes(frdId)) return { icon: "fa fa-clock", label: "Pending" };
+    return { icon: "fa fa-user-plus", label: "" };
+  };
 
   return (
     <>
@@ -39,8 +57,8 @@ const FriendsCard = () => {
                   <span className="frd-headline">{frd?.headline}</span>
                 </Link>
               </span>
-              <div className="friends-card-friend-requist">
-                <i className="fa fa-user-plus"></i>
+              <div className="friends-card-friend-requist" onClick={() => handleConnect(frd?._id)} style={{cursor: "pointer"}}>
+                <i className={getConnectLabel(frd?._id).icon}></i> {getConnectLabel(frd?._id).label}
               </div>
             </div>
           ))}
@@ -51,7 +69,7 @@ const FriendsCard = () => {
       </div>
 
       {viewAll && (
-        <AllFrdsSuggesions suggesions={suggesions} setViewAll={setViewAll} />
+        <AllFrdsSuggesions suggesions={suggesions} setViewAll={setViewAll} loggedInUser={loggedInUser} onConnect={handleConnect} />
       )}
     </>
   );

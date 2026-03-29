@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const PostJobCard = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="premium-card-section post-job-card box-shadow">
       <div className="premium-card-img">
@@ -10,10 +13,10 @@ const PostJobCard = () => {
         />
       </div>
       <div className="premium-card-bottom">
-        <b className="title">SM Media</b>
+        <b className="title">Hire on WeLyncu</b>
         <span>Looking for talent?</span>
       </div>
-      <div className="job-btn">Post A Job</div>
+      <div className="job-btn" onClick={() => navigate("/post-job")} style={{cursor: "pointer"}}>Post A Job</div>
     </div>
   );
 };

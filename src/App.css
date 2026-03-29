@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: var(--font-family-sans-serif);
-  background-color: #edf2f6;
+  background-color: #ffffff;
   overflow-x: hidden;
 }
 
@@ -88,4 +88,30 @@ body::-webkit-scrollbar-thumb:hover {
   overflow: hidden;               /* Hide the overflow text */
   text-overflow: ellipsis;        /* Show ellipsis (...) for overflow */
   white-space: normal;            /* Allow the text to wrap */
+}
+
+/*========== App Responsive ==============*/
+@media (max-width: 1300px) {
+  .pnf-main {
+    width: 95%;
+    padding: 60px 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pnf-main {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 15px;
+  }
+  .pnf-main img {
+    width: 80%;
+    margin-top: 20px;
+  }
+  .pnf-main .pnf-title {
+    font-size: 40px;
+  }
+  .pnf-main .pnf-text {
+    font-size: 16px;
+  }
 }

@@ -1,10 +1,10 @@
 import React from 'react'
 import CompanyProfileCard from '../company/CompanyProfileCard';
 
-const JobDetailsLeft = () => {
+const JobDetailsLeft = ({ job }) => {
   return (
     <div className='job-details-left-section'>
-        <CompanyProfileCard />
+        <CompanyProfileCard company={job?.company} logo={job?.companyLogo} />
     </div>
   )
 }

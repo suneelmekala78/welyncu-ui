@@ -21,25 +21,35 @@ import JobApplications from "./pages/JobApplications";
 import PostJob from "./pages/PostJob";
 import AllGames from "./pages/AllGames";
 import TicTocToe from "./components/games/TicTocToe";
+import ChessGame from "./components/games/ChessGame";
+import QuizGame from "./components/games/QuizGame";
+import Connect4Game from "./components/games/Connect4Game";
+import RPSGame from "./components/games/RPSGame";
+import MathBattleGame from "./components/games/MathBattleGame";
 import SinglePost from "./pages/SinglePost";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyOTP from "./pages/VerifyOTP";
 import ChangePassword from "./pages/ChangePassword";
 import CreatePage from "./pages/CreatePage";
+import Startups from "./pages/Startups";
+import StartupDetail from "./pages/StartupDetail";
+import CreateStartup from "./pages/CreateStartup";
+import Pitches from "./pages/Pitches";
+import CreatePitch from "./pages/CreatePitch";
+import Mentorships from "./pages/Mentorships";
+import CreateMentorship from "./pages/CreateMentorship";
+import BottomBar from "./components/bottombar/BottomBar";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import RespondInvite from "./components/games/RespondInvite";
-
-import io from "socket.io-client";
-
-const socket = io("http://localhost:8900");
 
 function Layout() {
   const { user } = useSelector((state) => state.user);
   const location = useLocation();
 
   return user ? (
-    <Outlet />
+    <>
+      <Outlet />
+      <BottomBar />
+    </>
   ) : (
     <Navigate to="/login" state={{ from: location }} replace />
   );
@@ -51,34 +61,6 @@ const ProtectedRoute = ({ children, redirectTo }) => {
 };
 
 function App() {
-  const [invitation, setInvitation] = useState(null);
-
-  useEffect(() => {
-    socket.on("receiveInvitation", (data) => {
-      setInvitation(data);
-    });
-
-    return () => {
-      socket.off("receiveInvitation");
-    };
-  }, []);
-
-  // const acceptInvite = () => {
-  //   socket.emit("acceptInvitation", {
-  //     gameId: invitation.gameId,
-  //     inviterId: invitation.inviter,
-  //   });
-  //   setInvitation(null);
-  //   window.location.href = `/tic-tac-toe/${invitation.gameId}`;
-  // };
-
-  // const rejectInvite = () => {
-  //   socket.emit("rejectInvitation", {
-  //     inviterId: invitation.inviter,
-  //   });
-  //   setInvitation(null);
-  // };
-
   return (
     <>
       <Routes>
@@ -127,11 +109,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/network" element={<Network />} />
           <Route path="/jobs" element={<Jobs />} />
-          <Route path="/job" element={<JobDetails />} />
+          <Route path="/job/:id" element={<JobDetails />} />
           <Route path="/post-job" element={<PostJob />} />
-          <Route path="/post" element={<SinglePost />} />
-          <Route path="/job/applications" element={<JobApplications />} />
-          <Route path="/company" element={<CompanyProfile />} />
+          <Route path="/post/:id" element={<SinglePost />} />
+          <Route path="/job/:id/applications" element={<JobApplications />} />
           <Route path="/page/:id" element={<CompanyProfile />} />
           <Route path="/create-page" element={<CreatePage />} />
           <Route path="/profile/:id" element={<Profile />} />
@@ -139,17 +120,31 @@ function App() {
           <Route path="/notifications" element={<Notifications />} />
 
           <Route path="/resumes" element={<Resumes />} />
-          <Route path="/resume/edit" element={<EditResume />} />
+          <Route path="/resume/edit/:id" element={<EditResume />} />
           <Route path="/resume/:id" element={<ViewResume />} />
+
+          <Route path="/startups" element={<Startups />} />
+          <Route path="/startup/:id" element={<StartupDetail />} />
+          <Route path="/create-startup" element={<CreateStartup />} />
+
+          <Route path="/pitches" element={<Pitches />} />
+          <Route path="/create-pitch" element={<CreatePitch />} />
+
+          <Route path="/mentorships" element={<Mentorships />} />
+          <Route path="/create-mentorship" element={<CreateMentorship />} />
 
           <Route path="/games" element={<AllGames />} />
           <Route path="/game/tictactoe" element={<TicTocToe />} />
+          <Route path="/game/chess" element={<ChessGame />} />
+          <Route path="/game/quiz" element={<QuizGame />} />
+          <Route path="/game/connect4" element={<Connect4Game />} />
+          <Route path="/game/rps" element={<RPSGame />} />
+          <Route path="/game/mathbattle" element={<MathBattleGame />} />
         </Route>
 
         <Route path="/terms-conditions" element={<TC />} />
         <Route path="*" element={<PageNotFound />} />
 
-        {invitation && <RespondInvite />}
       </Routes>
       <ToastContainer />
     </>

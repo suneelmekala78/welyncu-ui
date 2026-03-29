@@ -1,134 +1,188 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./games.css";
 import { useSelector } from "react-redux";
-import { io } from "socket.io-client";
+import { getConnectionsList, createGameApi } from "../../helper/apis";
+import { toast } from "react-toastify";
 
-const InviteFriend = ({ setInvite }) => {
-  const { userId } = useSelector((state) => state.user);
-  const [onlineFriends, setOnlineFriends] = useState([]);
-  const [selectedFriend, setSelectedFriend] = useState("");
-  const [betCoins, setBetCoins] = useState(1);
+const InviteFriend = ({ onClose, gameType, socket, onGameCreated }) => {
+  const { user } = useSelector((state) => state.user);
+  const [connections, setConnections] = useState([]);
+  const [selectedFriend, setSelectedFriend] = useState(null);
+  const [betCoins, setBetCoins] = useState(5);
   const [rounds, setRounds] = useState(3);
-  const socket = useRef();
+  const [quizCategory, setQuizCategory] = useState("general");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    socket.current = io("http://localhost:8900");
-
-    // Emit the user's socket connection with their ID
-    socket.current.emit("addUser", userId);
-
-    // Fetch online friends
-    socket.current.emit("getOnlineFriends", { userId });
-
-    socket.current.on("onlineFriends", (data) => {
-      setOnlineFriends(data.onlineFriends);
-      console.log(data.onlineFriends);
-    });
-
-    return () => {
-      socket.current.off("onlineFriends");
+    const fetchConnections = async () => {
+      const res = await getConnectionsList();
+      if (res?.status === "success") {
+        setConnections(res.connections || []);
+      }
     };
-  }, [userId]);
+    fetchConnections();
+  }, []);
 
-  const handleFriendSelection = (friendId) => {
-    setSelectedFriend(friendId);
+  const filteredConnections = connections.filter((c) =>
+    c?.fullName?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleInvite = async () => {
+    if (!selectedFriend) {
+      toast.error("Please select a friend to invite");
+      return;
+    }
+    if (betCoins < 0) {
+      toast.error("Bet coins cannot be negative");
+      return;
+    }
+    if ((gameType === "tictactoe" || gameType === "rps") && rounds % 2 === 0) {
+      toast.error("Rounds must be an odd number");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await createGameApi({
+        friendId: selectedFriend._id,
+        gameType,
+        betCoins,
+        rounds: (gameType === "tictactoe" || gameType === "rps") ? rounds : 1,
+        quizCategory: gameType === "quiz" ? quizCategory : undefined,
+      });
+
+      if (res?.status === "success") {
+        toast.success("Game invitation sent!");
+        // Notify via socket
+        if (socket) {
+          socket.emit("gameInvite", {
+            receiverId: selectedFriend._id,
+            gameId: res.game._id,
+            gameType,
+            inviterName: user?.fullName,
+            inviterId: user?._id,
+            betCoins,
+          });
+        }
+        if (onGameCreated) onGameCreated(res.game);
+        onClose();
+      } else {
+        toast.error(res?.message || "Failed to create game");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error creating game");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const inviteFriend = () => {
-    if (!selectedFriend || betCoins <= 0 || rounds % 2 === 0) {
-      alert("Please fill all fields correctly.");
-      return;
-    }
-
-    // Assume we have a function to get the friend's socket ID
-    const friendSocketId = onlineFriends.find((friend) => friend._id === selectedFriend)?.socketId;
-
-    if (!friendSocketId) {
-      alert("Selected friend is not online.");
-      return;
-    }
-
-    const gameId = `game-${Math.random().toString(36).substr(2, 9)}`; // Generate a unique game ID
-
-    socket.current.emit("inviteFriend", {
-      friendSocketId,
-      inviter: userId,
-      gameId,
-    });
-
-    alert("Invitation sent!");
-    setInvite(false); // Close the invite popup after sending
+  const gameLabels = {
+    tictactoe: "Tic Tac Toe",
+    chess: "Chess",
+    quiz: "Quiz",
+    connect4: "Connect 4",
+    rps: "Rock Paper Scissors",
+    mathbattle: "Math Battle",
   };
 
   return (
-    <div className="popup-section popup-section-active">
-      <div className="popup-container box-shadow p-15">
-        <i className="fa fa-xmark" onClick={() => setInvite(false)}></i>
-        <div className="invite-friend-popup profile-top-details-edit-section">
-          <div className="profile-top-details-edit-top">
-            <div className="edit-top-title">Invite Friend</div>
-          </div>
+    <div className="game-invite-overlay" onClick={onClose}>
+      <div className="game-invite-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="game-invite-header">
+          <h3>Invite to {gameLabels[gameType] || "Game"}</h3>
+          <i className="fa fa-xmark" onClick={onClose}></i>
+        </div>
 
-          <div className="personal-input">
-            <label htmlFor="coins">Bet coins</label>
+        <div className="game-invite-body">
+          <div className="game-invite-field">
+            <label>
+              <i className="fa fa-coins"></i> Bet Coins (Your balance: {user?.coins || 0})
+            </label>
             <input
               type="number"
-              id="coins"
+              min="0"
+              max={user?.coins || 0}
               value={betCoins}
-              onChange={(e) => setBetCoins(Number(e.target.value))}
-            />
-          </div>
-          <div className="personal-input">
-            <label htmlFor="rounds">Rounds</label>
-            <input
-              type="number"
-              id="rounds"
-              value={rounds}
-              onChange={(e) => setRounds(Number(e.target.value))}
+              onChange={(e) => setBetCoins(Math.max(0, Number(e.target.value)))}
             />
           </div>
 
-          <div className="personal-input">
-            <label htmlFor="friend">Invite Friend</label>
+          {(gameType === "tictactoe" || gameType === "rps") && (
+            <div className="game-invite-field">
+              <label>Rounds (odd number)</label>
+              <select value={rounds} onChange={(e) => setRounds(Number(e.target.value))}>
+                <option value={1}>1 Round</option>
+                <option value={3}>3 Rounds</option>
+                <option value={5}>5 Rounds</option>
+                <option value={7}>7 Rounds</option>
+              </select>
+            </div>
+          )}
+
+          {gameType === "quiz" && (
+            <div className="game-invite-field">
+              <label>Category</label>
+              <select value={quizCategory} onChange={(e) => setQuizCategory(e.target.value)}>
+                <option value="general">General Knowledge</option>
+                <option value="tech">Technology</option>
+                <option value="science">Science</option>
+              </select>
+            </div>
+          )}
+
+          <div className="game-invite-field">
+            <label>Select a Connection</label>
             <input
               type="text"
-              id="friend"
-              placeholder="Search your friend here..."
-              value={selectedFriend}
-              readOnly // Make it readOnly as we have a list below
+              placeholder="Search connections..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
-          <div className="all-friends-sec">
-            {onlineFriends.map((friend) => (
-              <div
-                key={friend._id}
-                className="inv-friend cp"
-                onClick={() => handleFriendSelection(friend._id)}
-              >
-                <div className="inv-friend-left">
-                  <img
-                    src={friend.profilePicture || "default-image-url"} // Replace with actual image URL
-                    alt={friend.name}
-                  />
-                  <div className="inv-friend-left-details">
-                    <b>{friend.name}</b>
-                    <span>{friend.role}</span> {/* Replace with friend's role */}
-                  </div>
-                </div>
-                <div className="inv-friend-right">
-                  <input
-                    type="checkbox"
-                    checked={selectedFriend === friend._id}
-                    readOnly
-                  />
-                </div>
+          <div className="connection-list">
+            {filteredConnections.length === 0 ? (
+              <div style={{ padding: "20px", textAlign: "center", color: "#999" }}>
+                {connections.length === 0 ? "No connections yet" : "No match found"}
               </div>
-            ))}
+            ) : (
+              filteredConnections.map((conn) => (
+                <div
+                  key={conn._id}
+                  className={`connection-item ${selectedFriend?._id === conn._id ? "selected" : ""}`}
+                  onClick={() => setSelectedFriend(conn)}
+                >
+                  <div className="connection-item-left">
+                    <img
+                      src={
+                        conn.profileUrl ||
+                        "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"
+                      }
+                      alt={conn.fullName}
+                    />
+                    <div>
+                      <b>{conn.fullName}</b>
+                      <span>{conn.headline}</span>
+                    </div>
+                  </div>
+                  {selectedFriend?._id === conn._id && (
+                    <i className="fa fa-check-circle" style={{ color: "#62f7c7" }}></i>
+                  )}
+                </div>
+              ))
+            )}
           </div>
+        </div>
 
-          <button className="invite-button" onClick={inviteFriend}>
-            Send Invitation
+        <div className="game-invite-footer">
+          <button
+            className="send-invite-btn"
+            onClick={handleInvite}
+            disabled={isSubmitting || !selectedFriend}
+          >
+            {isSubmitting ? "Sending..." : `Send Invitation${betCoins > 0 ? ` (${betCoins} coins)` : ""}`}
           </button>
         </div>
       </div>

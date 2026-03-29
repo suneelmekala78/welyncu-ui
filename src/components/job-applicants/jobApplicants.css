@@ -234,3 +234,40 @@
   display: flex;
   align-items: center;justify-content: space-between;
 }
+
+/*========== Job Applicants Responsive ==============*/
+@media (max-width: 1300px) {
+  .job-applicants-page .job-applicants-top .job-applicants-top-section,
+  .all-applicants-main {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .job-applicants-page .job-applicants-top .job-applicants-top-section {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .all-applicants-main {
+    flex-direction: column;
+  }
+  .all-applicants-main .all-applicants {
+    width: 100%;
+    margin-right: 0;
+  }
+  .all-applicants-main .application-details {
+    width: 100%;
+  }
+  .job-details-main-left {
+    width: 100%;
+    margin-right: 0;
+  }
+  .job-details-main-right {
+    width: 100%;
+    margin-top: 10px;
+  }
+  .job-applicants-top-left-all-details {
+    flex-wrap: wrap;
+  }
+}

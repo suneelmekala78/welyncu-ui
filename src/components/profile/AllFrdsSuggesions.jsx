@@ -1,7 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const AllFrdsSuggesions = ({ suggesions, setViewAll }) => {
+const AllFrdsSuggesions = ({ suggesions, setViewAll, loggedInUser, onConnect }) => {
+  const getConnectLabel = (frdId) => {
+    if (loggedInUser?.connections?.includes(frdId)) return { icon: "fa fa-user-check", label: "Connected" };
+    if (loggedInUser?.sendedConnectionRequests?.includes(frdId)) return { icon: "fa fa-clock", label: "Pending" };
+    return { icon: "fa fa-user-plus", label: "Connect" };
+  };
+
   return (
     <>
       <div className="popup-section popup-section-active">
@@ -26,8 +32,8 @@ const AllFrdsSuggesions = ({ suggesions, setViewAll }) => {
                       <span className="frd-headline">{frd?.headline}</span>
                     </Link>
                   </span>
-                  <div className="friends-suggesion-card-friend-requist">
-                    <i className="fa fa-user-plus"></i> Connect
+                  <div className="friends-suggesion-card-friend-requist" onClick={() => onConnect && onConnect(frd?._id)} style={{cursor: "pointer"}}>
+                    <i className={getConnectLabel(frd?._id).icon}></i> {getConnectLabel(frd?._id).label}
                   </div>
                 </div>
               ))}

@@ -134,3 +134,43 @@
   margin-right: 10px;
   cursor: pointer;
 }
+
+/*========== Single Post Responsive ==============*/
+@media (max-width: 1300px) {
+  .single-post-page {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .single-post-page {
+    flex-direction: column;
+  }
+  .single-post-page .single-post-left {
+    width: 100%;
+    margin-right: 0;
+  }
+  .single-post-page .single-post-right {
+    width: 100%;
+    margin-top: 10px;
+  }
+  .single-post-inputs {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .single-post-similar-posts .all-courses .course {
+    width: calc(50% - 10px);
+  }
+}
+
+@media (max-width: 480px) {
+  .single-post-inputs-right-reaction {
+    margin-left: 10px;
+    padding: 8px 10px;
+  }
+  .single-post-similar-posts .all-courses .course {
+    width: 100%;
+  }
+}

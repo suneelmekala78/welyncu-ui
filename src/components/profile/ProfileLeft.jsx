@@ -22,7 +22,7 @@ const ProfileLeft = ({ profileSection, setProfileSection, setEdit, user, getUser
       {profileSection === "network" && <ProfileNetwork  user={user} />}
       {profileSection === "courses" && <ProfileCourses  user={user} />}
       {profileSection === "pages" && <ProfilePages  user={user} />}
-      {profileSection === "reviews" && <ProfileReviews  user={user} />}
+      {profileSection === "reviews" && <ProfileReviews  user={user} getUserData={getUserData} />}
     </div>
   );
 };

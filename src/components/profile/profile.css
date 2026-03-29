@@ -601,3 +601,108 @@
 .friends-suggesion-card-friend-requist i{
   margin-right: 5px;
 }
+
+/*========== Profile Responsive ==============*/
+@media (max-width: 1300px) {
+  .user-profile-main {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .user-profile-main {
+    flex-direction: column;
+  }
+  .user-profile-left {
+    width: 100%;
+  }
+  .user-profile-right {
+    width: 100%;
+    margin: 10px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-profile-top-section .user-profile-pic {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .user-profile-top-section .user-profile-pic img {
+    width: 120px;
+    height: 120px;
+  }
+  .company-top-details {
+    flex-direction: column;
+    text-align: center;
+    padding: 10px;
+  }
+  .company-details-left {
+    width: 100%;
+  }
+  .company-details-right-sec {
+    margin-top: 10px;
+  }
+  .company-details-right {
+    justify-content: center;
+  }
+  .profile-achivements {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .profile-achivements .profile-achivement {
+    margin: 5px 8px;
+    font-size: 13px;
+  }
+  .profile-posts-top-filters {
+    flex-wrap: wrap;
+  }
+  .profile-posts-top-filters .profile-posts-top-filter {
+    margin: 5px 8px;
+    font-size: 13px;
+  }
+  .all-profile-posts {
+    column-count: 2;
+    column-width: 50%;
+  }
+  .all-courses .course {
+    width: 47%;
+    height: auto;
+  }
+  .all-profile-pages .profile-page,
+  .all-profile-pages > .create-page-box {
+    width: 100%;
+  }
+  .review-card {
+    width: 100%;
+  }
+  .company-mid-top {
+    flex-wrap: wrap;
+  }
+  .company-mid-top .company-top-list-item {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-profile-top-section .user-profile-pic img {
+    width: 100px;
+    height: 100px;
+  }
+  .user-profile-top-section .user-profile-pic {
+    bottom: -50px;
+  }
+  .company-top-banner {
+    height: 180px;
+  }
+  .all-profile-posts {
+    column-count: 2;
+  }
+  .all-courses .course {
+    width: 100%;
+  }
+  .profile-links {
+    justify-content: center;
+  }
+}

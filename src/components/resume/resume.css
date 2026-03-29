@@ -307,3 +307,52 @@
     text-align: start;
     margin: 40px 0;
 }
+
+/*========== Resume Responsive ==============*/
+@media (max-width: 1300px) {
+  .resumes-page,
+  .edit-resume-page {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .view-resume-page {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-resume-page {
+    flex-direction: column;
+  }
+  .edit-resume-left,
+  .edit-resume-right {
+    width: 100%;
+    margin: 10px 0;
+  }
+  .add-resume-box,
+  .resume-box {
+    width: calc(50% - 20px);
+    height: auto;
+    aspect-ratio: 5/6;
+  }
+  .personal-inputs .personal-flex-inputs {
+    flex-direction: column;
+  }
+  .personal-inputs .personal-flex-inputs > .personal-input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-resume-box,
+  .resume-box {
+    width: 100%;
+  }
+  .resumes-top {
+    margin: 20px 10px;
+  }
+}

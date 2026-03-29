@@ -214,3 +214,49 @@
 .job-card-btns .view-btn:hover{
   background-color: rgba(168, 167, 167, 0.179);
 }
+
+/*========== Jobs Responsive ==============*/
+@media (max-width: 1300px) {
+  .jobs-page {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .jobs-page {
+    flex-direction: column;
+  }
+  .jobs-left,
+  .jobs-right {
+    width: 100%;
+    margin: 5px 0;
+  }
+  .jobs-middle {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .all-jobs-grid {
+    flex-direction: column;
+  }
+  .job-card {
+    min-width: 100%;
+    margin: 5px 0;
+  }
+  .connection-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .all-jobs-filters {
+    flex-wrap: wrap;
+  }
+  .all-jobs-filters li {
+    padding: 8px 6px 12px 6px;
+    font-size: 13px;
+  }
+}

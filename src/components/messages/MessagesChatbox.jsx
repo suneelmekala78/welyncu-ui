@@ -2,11 +2,17 @@ import React, { useEffect, useRef } from "react";
 import moment from "moment";
 
 const MessagesChatbox = ({
+  currentChatUser,
   messages,
+  isMessagesLoading,
+  isTyping,
+  isRecipientOnline,
   userId,
   newMessage,
-  setNewMessage,
+  onTyping,
   handleSubmit,
+  showBackButton,
+  onBack,
 }) => {
   const scrollRef = useRef();
 
@@ -18,13 +24,29 @@ const MessagesChatbox = ({
       <div className="messages-chatbox-section">
         <div className="messages-chatbox-top box-shadow">
           <div className="chatbox-top-left">
+            {showBackButton && (
+              <button className="chatbox-back-btn" onClick={onBack}>
+                <i className="fa fa-arrow-left"></i>
+              </button>
+            )}
             <img
-              src="https://hips.hearstapps.com/hmg-prod/images/gettyimages-1229892983-square.jpg"
+              src={
+                currentChatUser?.profileUrl ||
+                "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"
+              }
               alt="user-pic"
             />
             <div className="chatbox-top-names">
-              <span className="chatbox-top-name">Suneel Mekala</span>
-              <span className="chatbox-top-headline">Fullstack Developer</span>
+              <span className="chatbox-top-name">
+                {currentChatUser?.fullName || "Select a conversation"}
+              </span>
+              <span className="chatbox-top-headline">
+                {isTyping
+                  ? "typing..."
+                  : isRecipientOnline
+                  ? "Online"
+                  : currentChatUser?.headline || "Offline"}
+              </span>
             </div>
           </div>
           <div className="chatbox-top-right">
@@ -41,9 +63,15 @@ const MessagesChatbox = ({
         </div>
 
         <div className="messages-chatbox-middle">
-          {/* <div className="chatbox-middle-date">
-            <span className="box-shadow">Yesterday</span>
-          </div> */}
+          {isMessagesLoading && (
+            <div className="messages-chat-empty">Loading messages...</div>
+          )}
+
+          {!isMessagesLoading && messages?.length === 0 && (
+            <div className="messages-chat-empty">
+              No messages yet. Start the conversation.
+            </div>
+          )}
 
           {messages?.map((mess, index) => (
             <div
@@ -77,24 +105,35 @@ const MessagesChatbox = ({
               </div>
             </div>
           ))}
+
+          {isTyping && (
+            <div className="message-container typing-wrap">
+              <div className="typing-indicator box-shadow">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="messages-chatbox-bottom box-shadow">
-          <div className="chatbox-bottom-icons">
-            <div className="chatbox-bottom-icon">
-              <i className="fa-regular fa-face-smile"></i>
-            </div>
-            <div className="chatbox-bottom-icon">
-              <i className="fa fa-plus"></i>
-            </div>
-          </div>
-          <input
-            type="text"
-            placeholder="What's app buddy!"
-            onChange={(e) => setNewMessage(e.target.value)}
-            value={newMessage}
-          />
-          <div className="chatbox-bottom-icon" onClick={handleSubmit}>
+          <form className="messages-chatbox-form" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Type your message..."
+              onChange={(e) => onTyping(e.target.value)}
+              value={newMessage}
+            />
+          </form>
+          <div
+            className={
+              newMessage?.trim()
+                ? "chatbox-bottom-icon"
+                : "chatbox-bottom-icon chatbox-bottom-icon-disabled"
+            }
+            onClick={handleSubmit}
+          >
             <i className="fa-regular fa-paper-plane"></i>
           </div>
         </div>

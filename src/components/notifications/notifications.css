@@ -15,63 +15,310 @@
   margin: 10px;
 }
 
-
-/*--- Notifications Middle || All notifications ---*/
-
-.notifications-middle-section .notifications-mid-title{
-    font-weight: 600;
-    padding: 15px;
+/*--- Header ---*/
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.all-notifications{
-    display: flex;
-    flex-direction: column;
+.notif-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.all-notifications .notification{
-    display: flex;
-    align-items: center;
-    border-top: 1px solid rgba(128, 128, 128, 0.2);
-    padding: 10px;
+.notif-header-left h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #191919;
 }
 
-.all-notifications .notification img{
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    cursor: pointer;
+.notif-badge {
+  background: #cc1016;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 0 6px;
 }
 
-.all-notifications .notification .notification-text{
-    font-size: 13px;
+.notif-mark-all-btn {
+  background: none;
+  border: none;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.notif-mark-all-btn:hover {
+  background: rgba(10, 102, 194, 0.08);
+}
+
+.notif-mark-all-btn i {
+  margin-right: 4px;
+}
+
+/*--- Filter tabs ---*/
+.notif-filters {
+  display: flex;
+  gap: 4px;
+  padding: 8px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.notif-filter-btn {
+  background: none;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.notif-filter-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #191919;
+}
+
+.notif-filter-btn.active {
+  background: #057642;
+  color: white;
+}
+
+/*--- Notification list ---*/
+.all-notifications {
+  display: flex;
+  flex-direction: column;
+}
+
+/*--- Individual notification ---*/
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.notification-item:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+/* Unread state */
+.notification-item.unread {
+  background: rgba(10, 102, 194, 0.06);
+}
+
+.notification-item.unread:hover {
+  background: rgba(10, 102, 194, 0.1);
+}
+
+.notif-unread-dot {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue);
+  flex-shrink: 0;
+}
+
+/*--- Avatar with type badge ---*/
+.notif-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.notif-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.notif-type-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+.notif-type-badge i {
+  font-size: 9px;
+  color: white;
+}
+
+/*--- Content ---*/
+.notif-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-message {
+  font-size: 13px;
+  color: #404040;
+  line-height: 1.4;
+  margin: 0 0 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.notification-item.unread .notif-message {
+  color: #191919;
+  font-weight: 500;
+}
+
+.notif-message strong {
+  font-weight: 700;
+  color: #191919;
+}
+
+.notif-time {
+  font-size: 12px;
+  color: #999;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.notification-item.unread .notif-time {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.notif-action-btn {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blue);
+  border: 1px solid var(--blue);
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.notif-action-btn:hover {
+  background: var(--blue);
+  color: white;
+}
+
+/*--- Actions ---*/
+.notif-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.notification-item:hover .notif-actions {
+  opacity: 1;
+}
+
+.notif-delete-btn {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #999;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+
+.notif-delete-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #cc1016;
+}
+
+/*--- Empty state ---*/
+.notif-empty {
+  padding: 50px 20px;
+  text-align: center;
+  color: #999;
+}
+
+.notif-empty i {
+  font-size: 36px;
+  margin-bottom: 12px;
+  display: block;
+  color: #ccc;
+}
+
+.notif-empty p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/*========== Notifications Responsive ==============*/
+@media (max-width: 1300px) {
+  .notifications-page {
+    width: 100%;
     padding: 0 10px;
+  }
 }
 
-.all-notifications .notification .notification-time{
-    display: flex;
-    flex-direction: column;
+@media (max-width: 900px) {
+  .notifications-left,
+  .notifications-right {
+    display: none;
+  }
+  .notifications-middle {
+    width: 100%;
+    margin: 10px 0;
+  }
 }
 
-.all-notifications .notification .notification-time i{
-    padding: 10px;
-    cursor: pointer;
-    background-color: rgba(179, 210, 253, 0.2);
-    color: var(--blue);
-    border-radius: 5px;
-}
-
-.all-notifications .notification .notification-time span{
-    font-size: 13px;
-    margin-top: 10px;
-}
-
-.notification-btn{
-    width: 40px;
-    text-align: center;
+@media (max-width: 480px) {
+  .notification-item {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .notif-avatar {
+    width: 36px;
+    height: 36px;
+  }
+  .notif-filters {
+    padding: 8px 10px;
+    overflow-x: auto;
+  }
+  .notif-filter-btn {
+    white-space: nowrap;
+    font-size: 12px;
     padding: 5px 10px;
-    margin-top: 5px;
-    background-color: var(--blue);
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
+  }
 }

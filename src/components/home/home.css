@@ -353,6 +353,7 @@
 
 @media (max-width: 1300px) {
   .home-page {
+    width: 100%;
     margin: 15px 10px;
   }
 }
@@ -378,6 +379,22 @@
 
   .home-middle {
     width: 100%;
+    margin: 5px;
+  }
+
+  .upload-post-section .upload-post-feilds .upload-feild {
+    font-size: 12px;
+  }
+
+  .upload-post-section .upload-input-feild img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .upload-post-section .upload-input-feild .post-btn {
+    width: 70px;
+    font-size: 12px;
+    padding: 5px 10px;
   }
 }
 

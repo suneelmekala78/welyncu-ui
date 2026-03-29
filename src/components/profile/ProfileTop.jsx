@@ -1,17 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/userSlice";
 import { useNavigate } from "react-router-dom";
-import { apiRequest } from "../../helper/apis";
+import { apiRequest, getLoggedinUser } from "../../helper/apis";
 import { toast } from "react-toastify";
 
 const ProfileTop = ({ setEdit, currentUser }) => {
   const { user } = useSelector((state) => state.user);
 
   const [moreBtn, setMoreBtn] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchMe = async () => {
+      const res = await getLoggedinUser();
+      setLoggedInUser(res);
+    };
+    fetchMe();
+  }, []);
+
+  const isConnected = loggedInUser?.connections?.includes(currentUser?._id);
+  const isPending = loggedInUser?.sendedConnectionRequests?.includes(currentUser?._id);
 
   const handleLogout = async () => {
     try {
@@ -29,6 +41,40 @@ const ProfileTop = ({ setEdit, currentUser }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleStartChat = () => {
+    if (!currentUser?._id || currentUser?._id === user?._id) return;
+
+    navigate("/chat", {
+      state: {
+        targetUserId: currentUser?._id,
+        targetUser: {
+          _id: currentUser?._id,
+          fullName: currentUser?.fullName,
+          headline: currentUser?.headline,
+          profileUrl: currentUser?.profileUrl,
+        },
+      },
+    });
+  };
+
+  const handleConnect = async () => {
+    try {
+      if (isConnected) {
+        const res = await apiRequest({ url: "/user/remove-connection", data: { targetUserId: currentUser?._id }, method: "POST" });
+        if (res?.status === "success") { toast.success(res?.message); const u = await getLoggedinUser(); setLoggedInUser(u); }
+        else toast.error(res?.message);
+      } else if (isPending) {
+        const res = await apiRequest({ url: "/user/withdraw-connection-requist", data: { targetUserId: currentUser?._id }, method: "POST" });
+        if (res?.status === "success") { toast.success(res?.message); const u = await getLoggedinUser(); setLoggedInUser(u); }
+        else toast.error(res?.message);
+      } else {
+        const res = await apiRequest({ url: "/user/send-connection-requist", data: { targetUserId: currentUser?._id }, method: "POST" });
+        if (res?.status === "success") { toast.success(res?.message); const u = await getLoggedinUser(); setLoggedInUser(u); }
+        else toast.error(res?.message);
+      }
+    } catch (error) { console.log(error); }
   };
 
   return (
@@ -79,41 +125,46 @@ const ProfileTop = ({ setEdit, currentUser }) => {
             </div>
             <div className="company-profile-follow-data">
               <span>
-                <b>100</b> following
+                <b>{currentUser?.followings?.length || 0}</b> following
               </span>
               <span>
-                <b>12K</b> followers
+                <b>{currentUser?.followers?.length || 0}</b> followers
               </span>
             </div>
-            {/* <div className="profile-links">
-              <i
-                className="fa-brands fa-facebook"
-                style={{ backgroundColor: "#1877F2" }}
-              ></i>
-              <i
-                className="fa-brands fa-instagram"
-                style={{ backgroundColor: "#dd3042" }}
-              ></i>
-              <i
-                className="fa-brands fa-youtube"
-                style={{ backgroundColor: "red" }}
-              ></i>
-              <i
-                className="fa-brands fa-twitter"
-                style={{ backgroundColor: "#1DA1F2" }}
-              ></i>
-            </div> */}
+            <div className="profile-links">
+              {currentUser?.links?.length > 0 ? (
+                currentUser.links.map((link, i) => {
+                  let icon = "fa-solid fa-link";
+                  let bg = "#808080";
+                  const url = link?.toLowerCase() || "";
+                  if (url.includes("facebook")) { icon = "fa-brands fa-facebook"; bg = "#1877F2"; }
+                  else if (url.includes("instagram")) { icon = "fa-brands fa-instagram"; bg = "#dd3042"; }
+                  else if (url.includes("youtube")) { icon = "fa-brands fa-youtube"; bg = "red"; }
+                  else if (url.includes("twitter") || url.includes("x.com")) { icon = "fa-brands fa-twitter"; bg = "#1DA1F2"; }
+                  else if (url.includes("github")) { icon = "fa-brands fa-github"; bg = "#333"; }
+                  else if (url.includes("linkedin")) { icon = "fa-brands fa-linkedin"; bg = "#0077b5"; }
+                  return (
+                    <i key={i} className={icon} style={{ backgroundColor: bg, cursor: "pointer" }}
+                      onClick={() => window.open(link.startsWith("http") ? link : `https://${link}`, "_blank")}></i>
+                  );
+                })
+              ) : null}
+            </div>
           </div>
           <div className="company-details-right-sec">
             <div className="company-details-right profile-details-right">
               {currentUser?._id !== user?._id && (
-                <div className="company-profile-topbtn company-website-btn">
+                <div
+                  className="company-profile-topbtn company-website-btn"
+                  onClick={handleStartChat}
+                >
                   <i className="fa-solid fa-comments"></i> Message
                 </div>
               )}
               {currentUser?._id !== user?._id && (
-                <div className="company-profile-topbtn company-follow-btn btn-background">
-                  <i className="fa fa-user-plus"></i> Connect
+                <div className="company-profile-topbtn company-follow-btn btn-background" onClick={handleConnect} style={{cursor: "pointer"}}>
+                  <i className={isConnected ? "fa fa-user-check" : isPending ? "fa fa-clock" : "fa fa-user-plus"}></i>
+                  {isConnected ? " Connected" : isPending ? " Pending" : " Connect"}
                 </div>
               )}
               <div

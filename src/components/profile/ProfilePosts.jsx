@@ -1,91 +1,81 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getUserPostsApi } from "../../helper/apis";
+import PostCard from "../posts/PostCard";
+import Loader from "../loaders/Loader";
 
-const ProfilePosts = () => {
+const ProfilePosts = ({ user }) => {
+  const [posts, setPosts] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchPosts = async () => {
+    if (!user?._id) return;
+    setIsLoading(true);
+    try {
+      const res = await getUserPostsApi(user._id);
+      if (res?.data) {
+        setPosts(res.data);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, [user?._id]);
+
+  const filteredPosts =
+    filter === "all"
+      ? posts
+      : filter === "photos"
+      ? posts.filter((p) => p.media?.some((m) => m.type === "image"))
+      : filter === "videos"
+      ? posts.filter((p) => p.media?.some((m) => m.type === "video"))
+      : filter === "documents"
+      ? posts.filter((p) => p.media?.some((m) => m.type === "document"))
+      : posts;
+
   return (
     <div className="profile-posts-section box-shadow p-15 mt-10 mb-10">
       <div className="profile-posts-top">
         <div className="profile-posts-top-filters">
-          <div className="profile-posts-top-filter active">All</div>
-          <div className="profile-posts-top-filter">Photos</div>
-          <div className="profile-posts-top-filter">Videos</div>
-          <div className="profile-posts-top-filter">Documents</div>
+          {["all", "photos", "videos", "documents"].map((f) => (
+            <div
+              key={f}
+              className={`profile-posts-top-filter ${filter === f ? "active" : ""}`}
+              onClick={() => setFilter(f)}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)}
+            </div>
+          ))}
         </div>
       </div>
       <div className="profile-posts-bottom">
-        <div className="all-profile-posts">
-          <div className="all-profile-post">
-            <img
-              src="https://i.pinimg.com/736x/89/0d/28/890d28b18cc97955fb0124c077470c67.jpg"
-              alt="post-pic"
-            />
+        {isLoading ? (
+          <Loader />
+        ) : filteredPosts.length > 0 ? (
+          <div className="all-profile-posts">
+            {filteredPosts.map((post) => (
+              <div className="all-profile-post" key={post._id}>
+                {post.media?.[0]?.type === "video" ? (
+                  <video src={post.media[0].url} style={{ width: "100%", borderRadius: "5px" }} />
+                ) : post.media?.[0]?.url ? (
+                  <img src={post.media[0].url} alt="post" />
+                ) : (
+                  <div className="box-shadow p-10" style={{ marginBottom: "5px", fontSize: "13px" }}>
+                    {post.description?.slice(0, 100)}
+                    {post.description?.length > 100 ? "..." : ""}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-          <div className="all-profile-post">
-            <img
-              src="https://img.freepik.com/premium-psd/fashion-square-banner-flyer-template_125755-127.jpg?w=1380"
-              alt="post-pic"
-            />
-          </div>
-          <div className="all-profile-post">
-            <img
-              src="https://i.pinimg.com/originals/6d/a9/15/6da915573436da50f743c0f2564fc521.jpg"
-              alt="post-pic"
-            />
-          </div>
-          <div className="all-profile-post">
-            <img
-              src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/dc28a1187634851.658d04bc589af.jpg"
-              alt="post-pic"
-            />
-          </div>
-          <div className="all-profile-post">
-            <img
-              src="https://s-media-cache-ak0.pinimg.com/736x/2c/12/46/2c1246ad3f159f96a1de3ec4d1bf9977.jpg"
-              alt="post-pic"
-            />
-          </div>
-          <div className="all-profile-post">
-            <img
-              src="https://1.bp.blogspot.com/-NzTrSs_qry8/XdkpnbMP5eI/AAAAAAAAKM8/69FELaXyPXI_y4a8V9MNft-1K8OytJ6YgCLcBGAsYHQ/s1600/anime-girl-with-magical-umbrella.jpg"
-              alt="post-pic"
-            />
-          </div>
-          <div className="all-profile-post">
-            <img
-              src="https://i.pinimg.com/736x/89/0d/28/890d28b18cc97955fb0124c077470c67.jpg"
-              alt="post-pic"
-            />
-          </div>
-          <div className="all-profile-post">
-            <img
-              src="https://img.freepik.com/premium-psd/fashion-square-banner-flyer-template_125755-127.jpg?w=1380"
-              alt="post-pic"
-            />
-          </div>
-          <div className="all-profile-post">
-            <img
-              src="https://i.pinimg.com/originals/9c/1a/d5/9c1ad506d84c4455f90c9f09afdf4767.jpg"
-              alt="post-pic"
-            />
-          </div>
-          <div className="all-profile-post">
-            <img
-              src="https://img.freepik.com/free-vector/spring-sale-flyer-template-with-photo_52683-34795.jpg?w=1480&t=st=1704945301~exp=1704945901~hmac=606dbf6ac56c6c1d68665eb3e63546a932b48477b2a0bfc04edb27f34018a429"
-              alt="post-pic"
-            />
-          </div>
-          <div className="all-profile-post">
-            <img
-              src="https://img.freepik.com/premium-psd/modern-instagram-post-banner_214530-1.jpg"
-              alt="post-pic"
-            />
-          </div>
-          <div className="all-profile-post">
-            <img
-              src="https://th.bing.com/th/id/OIP.QJJS4jqO8VA3tmVn7j6zHQHaJl?w=535&h=693&rs=1&pid=ImgDetMain"
-              alt="post-pic"
-            />
-          </div>
-        </div>
+        ) : (
+          <div className="noposts-text">No posts yet</div>
+        )}
       </div>
     </div>
   );

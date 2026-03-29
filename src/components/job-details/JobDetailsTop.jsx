@@ -1,6 +1,14 @@
 import React from "react";
 
-const JobDetailsTop = ({ apply, setApply }) => {
+const JobDetailsTop = ({ job, setApply }) => {
+  const timeAgo = (date) => {
+    const diff = Date.now() - new Date(date).getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    if (days === 0) return "Today";
+    if (days === 1) return "1 day ago";
+    return `${days} days ago`;
+  };
+
   return (
     <div className="company-profile-top-section box-shadow">
       <div className="company-top-banner">
@@ -11,14 +19,14 @@ const JobDetailsTop = ({ apply, setApply }) => {
       </div>
       <div className="company-top-details">
         <div className="company-details-left">
-          <div className="company-profile-name">UI/UX Designer</div>
+          <div className="company-profile-name">{job?.title}</div>
           <div className="job-details-top">
-            <span className="job-details-top-company-name">Google</span>
+            <span className="job-details-top-company-name">{job?.company}</span>
             <span className="job-details-top-location">
-              <i className="fa fa-location-dot"></i>Melbourne, AU
+              <i className="fa fa-location-dot"></i>{job?.location}
             </span>
             <span className="job-details-top-posted-time">
-              Posted 5 days ago
+              Posted {timeAgo(job?.createdAt)}
             </span>
           </div>
         </div>

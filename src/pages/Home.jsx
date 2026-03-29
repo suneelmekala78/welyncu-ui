@@ -10,6 +10,7 @@ import { getLoggedinUser } from "../helper/apis";
 const Home = () => {
   const [user, setUser] = useState({});
   const [storyView, setStoryView] = useState(false);
+  const [activeStoryGroup, setActiveStoryGroup] = useState(null);
 
   const getUserData = async () => {
     const res = await getLoggedinUser();
@@ -28,14 +29,14 @@ const Home = () => {
           <HomeLeft user={user} />
         </div>
         <div className="home-middle">
-          <HomeMid user={user} setStoryView={setStoryView} />
+          <HomeMid user={user} setStoryView={setStoryView} setActiveStoryGroup={setActiveStoryGroup} />
         </div>
         <div className="home-right">
           <HomeRight />
         </div>
       </div>
 
-      <StoryCard storyView={storyView} setStoryView={setStoryView} />
+      <StoryCard storyView={storyView} setStoryView={setStoryView} activeStoryGroup={activeStoryGroup} />
     </>
   );
 };

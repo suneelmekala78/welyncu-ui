@@ -1,11 +1,23 @@
-import React, { useRef } from "react";
+﻿import React, { useRef, useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import "../components/resume/resume.css";
 import TopNav from "../components/topnav/TopNav";
+import { getResumeApi } from "../helper/apis";
 
 const ViewResume = () => {
+  const { id } = useParams();
   const pdfRef = useRef();
+  const [resume, setResume] = useState(null);
+
+  useEffect(() => {
+    const fetchResume = async () => {
+      const res = await getResumeApi(id);
+      setResume(res?.data?.resume || null);
+    };
+    if (id) fetchResume();
+  }, [id]);
 
   const ResumeDownload = () => {
     const input = pdfRef.current;
@@ -19,167 +31,93 @@ const ViewResume = () => {
       const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
       const imgX = (pdfWidth - imgWidth * ratio) / 2;
       const imgY = 0;
-      pdf.addImage(
-        imgData,
-        "PNG",
-        imgX,
-        imgY,
-        imgWidth * ratio,
-        imgHeight * ratio
-      );
-      pdf.save("resume.pdf");
+      pdf.addImage(imgData, "PNG", imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+      pdf.save(`${resume?.title || "resume"}.pdf`);
     });
   };
+
+  if (!resume) return <><TopNav /><div style={{padding: "40px", textAlign: "center"}}>Loading...</div></>;
+
+  const p = resume.personalDetails || {};
+  const color = resume.themeColor || "#7c3aed";
 
   return (
     <>
       <TopNav />
       <div className="view-resume-page">
         <div className="view-resume-top">
-          <h1>Here is your Full Stack Developer Resume</h1>
+          <h1>Here is your {resume.title}</h1>
           <p>Now you are ready to download and share your resume.</p>
           <div className="view-resume-btns">
-            <div
-              className="view-resume-btn"
-              id="download"
-              onClick={ResumeDownload}
-            >
-              Download
-            </div>
+            <div className="view-resume-btn" id="download" onClick={ResumeDownload}>Download</div>
             <div className="view-resume-btn">Share</div>
           </div>
         </div>
-        <div
-          className="result-resume-section box-shadow"
-          id="resume"
-          ref={pdfRef}
-        >
-          <div className="pdt"></div>
+        <div className="result-resume-section box-shadow" id="resume" ref={pdfRef}>
+          <div className="pdt" style={{ backgroundColor: color }}></div>
           <div className="main-result-resume p-15">
             <div className="main-resume-top">
               <div className="main-resume-top-left">
-                <h2>Suneel Mekala</h2>
-                <p>Full Stack Developer</p>
+                <h2>{p.fullName || "Your Name"}</h2>
+                <p>{p.jobTitle || ""}</p>
               </div>
               <div className="main-resume-top-right">
-                <div className="main-resume-email">
-                  <i className="fa fa-envelope"></i> suneelmekala78@gmail.com
-                </div>
-                <div className="main-resume-email">
-                  <i className="fa fa-phone"></i> +91 9603083867
-                </div>
-                <div className="main-resume-email">
-                  <i className="fa fa-location-dot"></i> Hyderabad, Telangana
-                </div>
+                {p.email && <div className="main-resume-email"><i className="fa fa-envelope"></i> {p.email}</div>}
+                {p.phone && <div className="main-resume-email"><i className="fa fa-phone"></i> {p.phone}</div>}
+                {p.address && <div className="main-resume-email"><i className="fa fa-location-dot"></i> {p.address}</div>}
               </div>
             </div>
-            <div className="main-summery mr-sec">
-              <h3 className="mr-title">Summery</h3>
-              <div className="mr-desc">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt
-                  vero exercitationem ipsa sapiente at voluptas aspernatur
-                  porro. Beatae quia dolorem recusandae reiciendis praesentium,
-                  sed provident odit distinctio in cum. Ea?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt
-                  vero exercitationem ipsa sapiente at voluptas aspernatur
-                  porro. Beatae quia dolorem recusandae reiciendis praesentium,
-                  sed provident odit distinctio in cum. Ea?
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt
-                  vero exercitationem ipsa sapiente at voluptas aspernatur
-                  porro. Beatae quia dolorem recusandae reiciendis praesentium,
-                  sed provident odit distinctio in cum. Ea?
-                </p>
+            {resume.summary && (
+              <div className="main-summery mr-sec">
+                <h3 className="mr-title" style={{ color }}>Summary</h3>
+                <div className="mr-desc"><p>{resume.summary}</p></div>
               </div>
-            </div>
-            <div className="main-skills mr-sec">
-              <h3 className="mr-title">Skills</h3>
-              <div className="mr-desc">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt
-                  vero exercitationem ipsa sapiente at voluptas aspernatur
-                  porro. Beatae quia dolorem recusandae reiciendis praesentium,
-                  sed provident odit distinctio in cum. Ea?
-                </p>
+            )}
+            {resume.skills?.length > 0 && (
+              <div className="main-skills mr-sec">
+                <h3 className="mr-title" style={{ color }}>Skills</h3>
+                <div className="mr-desc">
+                  <p>{resume.skills.map(s => `${s.name} (${"â˜…".repeat(s.rating)}${"â˜†".repeat(5 - s.rating)})`).join(" | ")}</p>
+                </div>
               </div>
-            </div>
-            <div className="main-experience mr-sec">
-              <h3 className="mr-title">Experience</h3>
-              <div className="mr-desc">
-                <div className="mr-desc-sec">
-                  <div className="edu-details">
-                    <div className="edu-details-left">
-                      <b>Google Pvt Ltd</b>
-                      <span>New york, US</span>
+            )}
+            {resume.experience?.length > 0 && (
+              <div className="main-experience mr-sec">
+                <h3 className="mr-title" style={{ color }}>Experience</h3>
+                <div className="mr-desc">
+                  {resume.experience.map((exp, i) => (
+                    <div className="mr-desc-sec" key={i}>
+                      <div className="edu-details">
+                        <div className="edu-details-left">
+                          <b>{exp.companyName}</b>
+                          <span>{exp.location}</span>
+                        </div>
+                        <div className="edu-details-right">{exp.fromDate} - {exp.toDate}</div>
+                      </div>
+                      <p><b>{exp.positionTitle}</b> {exp.summary && `- ${exp.summary}`}</p>
                     </div>
-                    <div className="edu-details-right">
-                      2nd Feb 2020 - 14th Jun 2024
-                    </div>
-                  </div>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Sunt vero exercitationem ipsa sapiente at voluptas
-                    aspernatur porro. Beatae quia dolorem recusandae reiciendis
-                    praesentium, sed provident odit distinctio in cum. Ea?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt
-                  vero exercitationem ipsa sapiente at voluptas aspernatur
-                  porro. Beatae quia dolorem recusandae reiciendis praesentium,
-                  sed provident odit distinctio in cum. Ea?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt
-                  vero exercitationem ipsa sapiente at voluptas aspernatur
-                  porro. Beatae quia dolorem recusandae reiciendis praesentium,
-                  sed provident odit distinctio in cum. Ea?
-                  </p>
-                </div>
-                <div className="mr-desc-sec">
-                  <div className="edu-details">
-                    <div className="edu-details-left">
-                      <b>Eagle Eye Technologies</b>
-                      <span>North Coroline, US</span>
-                    </div>
-                    <div className="edu-details-right">
-                      2nd Feb 2020 - 14th Jun 2024
-                    </div>
-                  </div>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Sunt vero exercitationem ipsa sapiente at voluptas
-                    aspernatur porro. Beatae quia dolorem recusandae reiciendis
-                    praesentium, sed provident odit distinctio in cum. Ea?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt
-                  vero exercitationem ipsa sapiente at voluptas aspernatur
-                  porro. Beatae quia dolorem recusandae reiciendis praesentium,
-                  sed provident odit distinctio in cum. Ea?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt
-                  vero exercitationem ipsa sapiente at voluptas aspernatur
-                  porro. Beatae quia dolorem recusandae reiciendis praesentium,
-                  sed provident odit distinctio in cum. Ea?
-                  </p>
+                  ))}
                 </div>
               </div>
-            </div>
-            <div className="main-education mr-sec">
-              <h3 className="mr-title">Education</h3>
-              <div className="mr-desc">
-                <div className="edu-details">
-                  <div className="edu-details-left">
-                    <b>Computer Science and Engineering</b>
-                    <span>SV Univercity, Tirupati</span>
-                  </div>
-                  <div className="edu-details-right">
-                    2nd Feb 2020 - 14th Jun 2024
-                  </div>
-                </div>
-                <div className="edu-details">
-                  <div className="edu-details-left">
-                    <b>Computer Science and Engineering</b>
-                    <span>SV Univercity, Tirupati</span>
-                  </div>
-                  <div className="edu-details-right">
-                    2nd Feb 2020 - 14th Jun 2024
-                  </div>
+            )}
+            {resume.education?.length > 0 && (
+              <div className="main-education mr-sec">
+                <h3 className="mr-title" style={{ color }}>Education</h3>
+                <div className="mr-desc">
+                  {resume.education.map((edu, i) => (
+                    <div className="edu-details" key={i}>
+                      <div className="edu-details-left">
+                        <b>{edu.degreeTitle} - {edu.fieldOfStudy}</b>
+                        <span>{edu.collegeName}</span>
+                      </div>
+                      <div className="edu-details-right">{edu.startDate} - {edu.endDate}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
           </div>
-          <div className="pdt"></div>
+          <div className="pdt" style={{ backgroundColor: color }}></div>
         </div>
       </div>
     </>

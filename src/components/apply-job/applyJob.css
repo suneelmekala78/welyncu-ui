@@ -45,3 +45,21 @@
   display: flex;
   flex-wrap: wrap;
 }
+
+/*========== Apply Job Responsive ==============*/
+@media (max-width: 900px) {
+  .apply-job-container {
+    width: 95vw;
+    margin: 5rem auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .apply-job-container {
+    margin: 2rem auto;
+    padding: 10px;
+  }
+  .apply-job-title {
+    font-size: 17px;
+  }
+}

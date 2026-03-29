@@ -151,3 +151,35 @@
   cursor: pointer;
   border-radius: 5px;
 }
+
+/*========== Network Responsive ==============*/
+@media (max-width: 1300px) {
+  .network-page {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .network-page {
+    flex-direction: column;
+  }
+  .network-left {
+    width: 100%;
+  }
+  .network-right {
+    width: 100%;
+    margin: 10px 0;
+  }
+  .connection-card {
+    max-width: 100%;
+  }
+  .connection-requiests .connection-requiest {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .connection-requiest-btns {
+    margin-left: 0;
+  }
+}

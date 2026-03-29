@@ -46,3 +46,27 @@
 .create-page-create-section{
     padding: 5px;
 }
+
+/*========== Create Page Responsive ==============*/
+@media (max-width: 1300px) {
+  .create-page-page {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .create-page-select-section-bottom {
+    flex-direction: column;
+    align-items: center;
+  }
+  .create-page-select-section-bottom .create-page-select-box {
+    width: 80%;
+  }
+}
+
+@media (max-width: 480px) {
+  .create-page-select-section-bottom .create-page-select-box {
+    width: 100%;
+  }
+}

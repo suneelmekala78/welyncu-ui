@@ -4,13 +4,13 @@ import CompanyAbout from './CompanyAbout'
 import CompanyOverview from './CompanyOverview'
 import CompanyLocations from './CompanyLocations'
 
-const CompanyMid = () => {
+const CompanyMid = ({ page }) => {
   return (
     <div className='company-middle-section'>
       <CompanyMidTop/>
-      <CompanyAbout />
-      <CompanyOverview/>
-      <CompanyLocations/>
+      <CompanyAbout page={page} />
+      <CompanyOverview page={page} />
+      <CompanyLocations page={page} />
     </div>
   )
 }

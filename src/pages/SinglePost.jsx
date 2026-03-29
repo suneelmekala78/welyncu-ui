@@ -1,448 +1,138 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../components/single-post/singlePost.css";
 import TopNav from "../components/topnav/TopNav";
+import { useParams, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { getPostApi, likePostApi, commentPostApi } from "../helper/apis";
+import moment from "moment";
 
 const SinglePost = () => {
+  const { id } = useParams();
+  const { user } = useSelector((state) => state.user);
+  const [post, setPost] = useState(null);
+  const [liked, setLiked] = useState(false);
+  const [commentText, setCommentText] = useState("");
+
+  useEffect(() => {
+    if (!id) return;
+    (async () => {
+      const res = await getPostApi(id);
+      if (res?.status === "success") {
+        setPost(res.data);
+        setLiked(res.data.likes?.some((l) => l === user?._id || l?._id === user?._id));
+      }
+    })();
+  }, [id, user?._id]);
+
+  const handleLike = async () => {
+    setLiked(!liked);
+    const res = await likePostApi(post._id);
+    if (res?.status === "success") setPost(res.data);
+  };
+
+  const handleComment = async () => {
+    if (!commentText.trim()) return;
+    const res = await commentPostApi(post._id, commentText.trim());
+    if (res?.status === "success") {
+      setPost(res.data);
+      setCommentText("");
+    }
+  };
+
+  if (!post) {
+    return (
+      <>
+        <TopNav />
+        <div className="single-post-page" style={{ textAlign: "center", paddingTop: "100px", color: "#999" }}>
+          Loading post...
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <TopNav />
       <div className="single-post-page">
         <div className="single-post-left">
           <div className="single-post-left-top-section box-shadow mb-10">
-            <video src="./assets/videos/dolphins.mp4" controls></video>
+            {post.media?.length > 0 && post.media[0].mediaType === "video" && (
+              <video src={post.media[0].url} controls></video>
+            )}
+            {post.media?.length > 0 && post.media[0].mediaType === "image" && (
+              <img src={post.media[0].url} alt="post" style={{ width: "100%" }} />
+            )}
             <div className="single-post-details p-15">
-              <h2>
-                Shrek Forever After in 4K UHD | Shrek's Biggest Surprise |
-                Extended Preview
-              </h2>
+              {post.caption && <h2>{post.caption}</h2>}
               <div className="single-post-inputs">
                 <div className="single-post-inputs-left">
-                  <img
-                    src="https://hips.hearstapps.com/hmg-prod/images/gettyimages-1229892983-square.jpg"
-                    alt="profile-pic"
-                  />
+                  <Link to={`/profile/${post.user?._id}`}>
+                    <img src={post.user?.profileUrl || "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"} alt="profile" />
+                  </Link>
                   <div className="single-post-inputs-left-texts">
-                    <b>Elon Musk</b>
-                    <span>3.04M followers</span>
+                    <Link to={`/profile/${post.user?._id}`}><b>{post.user?.fullName}</b></Link>
+                    <span>{post.user?.headline}</span>
                   </div>
-                  <button className="btn-background">Follow</button>
                 </div>
                 <div className="single-post-inputs-right">
                   <div className="single-post-inputs-right-reactions">
-                    <div className="single-post-inputs-right-reaction">
-                      <i className="fa-solid fa-thumbs-up"></i> <span>32K</span>
+                    <div className="single-post-inputs-right-reaction" onClick={handleLike} style={{ cursor: "pointer" }}>
+                      <i className={liked ? "fa-solid fa-heart" : "fa-regular fa-heart"} style={liked ? { color: "#ff4d6d" } : {}}></i>
+                      <span>{post.likes?.length || 0}</span>
                     </div>
-
                     <div className="single-post-inputs-right-reaction">
                       <i className="fa-solid fa-share"></i> <span>Share</span>
                     </div>
-                    <div className="single-post-inputs-right-reaction">
-                      <i className="fa-solid fa-ellipsis"></i>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="single-post-description-section box-shadow mb-10 p-15">
-            <div className="single-post-description-top mb-10">
-              <span>4.2M views</span>
-              <span>Posted on 19 </span>
-            </div>
-            <div className="single-post-description-bottom">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga,
-              nesciunt expedita vel dolorum aliquid nisi similique molestiae
-              eius a quaerat iure sequi non assumenda, hic, aspernatur corrupti
-              qui ipsa minus? Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Fuga, nesciunt expedita vel dolorum aliquid nisi similique
-              molestiae eius a quaerat iure sequi non assumenda, hic, aspernatur
-              corrupti qui ipsa minus? Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Fuga, nesciunt expedita vel dolorum aliquid nisi
-              similique molestiae eius a quaerat iure sequi non assumenda, hic,
-              aspernatur corrupti qui ipsa minus?
-            </div>
-          </div>
-          <div className="single-post-similar-posts box-shadow mb-10">
-            <h3 className="single-post-similar-posts-title p-15">
-              Similar Posts
-            </h3>
-            <div className="all-courses">
-              <div className="course box-shadow">
-                <div className="course-img">
-                  <img
-                    src="https://img.freepik.com/premium-psd/school-education-admission-youtube-thumbnail-web-banner-template_475351-410.jpg"
-                    alt="course-img"
-                  />
-                </div>
-                <div className="course-details">
-                  <div className="course-progressbar"></div>
-                  <div className="course-details-top">
-                    <div className="course-details-top-left">
-                      <div className="category">Technology</div>
-                    </div>
-                    <div className="course-details-top-right">
-                      <span>5 days ago</span>
-                    </div>
-                  </div>
-                  <div className="course-details-mid">
-                    <div className="course-title">
-                      ReactJS Full Course in Telugu
-                    </div>
-                  </div>
-                  <div className="course-details-bottom">
-                    <div className="course-rating">
-                      4.9
-                      <div className="ratings">
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa-regular fa-star"></i>
-                      </div>
-                    </div>
-                    <div className="course-views">3.5K views</div>
-                  </div>
-                </div>
+          {post.caption && (
+            <div className="single-post-description-section box-shadow mb-10 p-15">
+              <div className="single-post-description-top mb-10">
+                <span>{post.likes?.length || 0} likes</span>
+                <span>{moment(post.createdAt).fromNow()}</span>
               </div>
-              <div className="course box-shadow">
-                <div className="course-img">
-                  <img
-                    src="https://satoms.com/wp-content/uploads/2020/07/English-Course-Online.jpg"
-                    alt="course-img"
-                  />
-                </div>
-                <div className="course-details">
-                  <div className="course-progressbar"></div>
-                  <div className="course-details-top">
-                    <div className="course-details-top-left">
-                      <div className="category">Technology</div>
-                    </div>
-                    <div className="course-details-top-right">
-                      <span>5 days ago</span>
-                    </div>
-                  </div>
-                  <div className="course-details-mid">
-                    <div className="course-title">
-                      ReactJS Full Course in Telugu
-                    </div>
-                  </div>
-                  <div className="course-details-bottom">
-                    <div className="course-rating">
-                      4.9
-                      <div className="ratings">
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa-regular fa-star"></i>
-                      </div>
-                    </div>
-                    <div className="course-views">3.5K views</div>
-                  </div>
-                </div>
-              </div>
-              <div className="course box-shadow">
-                <div className="course-img">
-                  <img
-                    src="https://i.ytimg.com/vi/WGJJIrtnfpk/maxresdefault.jpg"
-                    alt="course-img"
-                  />
-                </div>
-                <div className="course-details">
-                  <div className="course-progressbar"></div>
-                  <div className="course-details-top">
-                    <div className="course-details-top-left">
-                      <div className="category">Technology</div>
-                    </div>
-                    <div className="course-details-top-right">
-                      <span>5 days ago</span>
-                    </div>
-                  </div>
-                  <div className="course-details-mid">
-                    <div className="course-title">
-                      ReactJS Full Course in Telugu
-                    </div>
-                  </div>
-                  <div className="course-details-bottom">
-                    <div className="course-rating">
-                      4.9
-                      <div className="ratings">
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa-regular fa-star"></i>
-                      </div>
-                    </div>
-                    <div className="course-views">3.5K views</div>
-                  </div>
-                </div>
-              </div>
-              <div className="course box-shadow">
-                <div className="course-img">
-                  <img
-                    src="https://hinzcooking.com/wp-content/uploads/2019/10/how-to-make-biryani-at-home-01.jpg"
-                    alt="course-img"
-                  />
-                </div>
-                <div className="course-details">
-                  <div className="course-progressbar"></div>
-                  <div className="course-details-top">
-                    <div className="course-details-top-left">
-                      <div className="category">Cooking</div>
-                    </div>
-                    <div className="course-details-top-right">
-                      <span>5 days ago</span>
-                    </div>
-                  </div>
-                  <div className="course-details-mid">
-                    <div className="course-title">
-                      How to make Dum Biriyani at home
-                    </div>
-                  </div>
-                  <div className="course-details-bottom">
-                    <div className="course-rating">
-                      4.9
-                      <div className="ratings">
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa-regular fa-star"></i>
-                      </div>
-                    </div>
-                    <div className="course-views">3.5K views</div>
-                  </div>
-                </div>
-              </div>
-              <div className="course box-shadow">
-                <div className="course-img">
-                  <img
-                    src="https://i.ytimg.com/vi/B0EuTVxhrZM/maxresdefault.jpg"
-                    alt="course-img"
-                  />
-                </div>
-                <div className="course-details">
-                  <div className="course-progressbar"></div>
-                  <div className="course-details-top">
-                    <div className="course-details-top-left">
-                      <div className="category">Cooking</div>
-                    </div>
-                    <div className="course-details-top-right">
-                      <span>2 days ago</span>
-                    </div>
-                  </div>
-                  <div className="course-details-mid">
-                    <div className="course-title">Koriean Ice-Creams</div>
-                  </div>
-                  <div className="course-details-bottom">
-                    <div className="course-rating">
-                      4.9
-                      <div className="ratings">
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa-regular fa-star"></i>
-                      </div>
-                    </div>
-                    <div className="course-views">3.5K views</div>
-                  </div>
-                </div>
-              </div>
-              <div className="course box-shadow">
-                <div className="course-img">
-                  <img
-                    src="https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto,q_auto,f_auto/gigs/249091166/original/1bce896e0718bd3d344f21ff30874fa5fd171cce/create-youtube-crypto-and-gaming-thumbnails-in-5-hours.jpg"
-                    alt="course-img"
-                  />
-                </div>
-                <div className="course-details">
-                  <div className="course-progressbar"></div>
-                  <div className="course-details-top">
-                    <div className="course-details-top-left">
-                      <div className="category">Health</div>
-                    </div>
-                    <div className="course-details-top-right">
-                      <span>2h ago</span>
-                    </div>
-                  </div>
-                  <div className="course-details-mid">
-                    <div className="course-title">Yoga for Health</div>
-                  </div>
-                  <div className="course-details-bottom">
-                    <div className="course-rating">
-                      4.9
-                      <div className="ratings">
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa fa-star"></i>
-                        <i className="fa-regular fa-star"></i>
-                      </div>
-                    </div>
-                    <div className="course-views">3.5K views</div>
-                  </div>
-                </div>
+              <div className="single-post-description-bottom">
+                <pre style={{ whiteSpace: "pre-wrap", fontFamily: "inherit" }}>{post.caption}</pre>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="single-post-right">
           <div className="single-post-comments box-shadow p-15">
-            <div className="single-post-comments-title">Comments</div>
+            <div className="single-post-comments-title">Comments ({post.comments?.length || 0})</div>
+
+            <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+              <img src={user?.profileUrl || "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"} alt="me" style={{ width: 32, height: 32, borderRadius: "50%", objectFit: "cover" }} />
+              <input
+                type="text"
+                placeholder="Write a comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleComment()}
+                style={{ flex: 1, padding: "8px 14px", borderRadius: 20, border: "1px solid rgba(128,128,128,0.3)", background: "transparent", color: "inherit", fontSize: 13, outline: "none" }}
+              />
+            </div>
+
             <div className="all-comments">
-              <div className="comment box-shadow">
-                <i
-                  className="fa fa-ellipsis-vertical"
-                  style={{ float: "right" }}
-                ></i>
-                <div className="comment-top">
-                  <img
-                    src="https://th.bing.com/th/id/OIP.Afk9XWKAozdV1F0NBdd4SgAAAA?rs=1&pid=ImgDetMain"
-                    alt="pic"
-                  />
-                  <div className="commenter-details">
-                    <b>Mark Zuckerberg</b>
-                    <span>5 days ago</span>
+              {post.comments?.map((c, i) => (
+                <div className="comment box-shadow" key={i}>
+                  <div className="comment-top">
+                    <img src={c.user?.profileUrl || "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"} alt="" />
+                    <div className="commenter-details">
+                      <b>{c.user?.fullName}</b>
+                      <span>{moment(c.createdAt).fromNow()}</span>
+                    </div>
                   </div>
+                  <div className="comment-text">{c.text}</div>
                 </div>
-                <div className="comment-text">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Suscipit, quia! Quia similique repellendus quasi quae, a
-                  voluptatibus, molestias dolores corrupti labore id, nostrum
-                  aut earum! Provident debitis sunt autem iusto?
-                </div>
-                <div className="comment-reactions">
-                  <div className="comment-reaction">
-                    <i className="fa-solid fa-thumbs-up"></i> <span>32K</span>
-                  </div>
-                  <div className="comment-reaction">
-                    <span>Reply</span>
-                  </div>
-                </div>
-              </div>
-              <div className="comment box-shadow">
-                <i
-                  className="fa fa-ellipsis-vertical"
-                  style={{ float: "right" }}
-                ></i>
-                <div className="comment-top">
-                  <img
-                    src="https://th.bing.com/th/id/OIP.Afk9XWKAozdV1F0NBdd4SgAAAA?rs=1&pid=ImgDetMain"
-                    alt="pic"
-                  />
-                  <div className="commenter-details">
-                    <b>Mark Zuckerberg</b>
-                    <span>5 days ago</span>
-                  </div>
-                </div>
-                <div className="comment-text">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Suscipit, quia! Quia similique repellendus quasi quae, a
-                  voluptatibus, molestias dolores corrupti labore id, nostrum
-                  aut earum! Provident debitis sunt autem iusto?
-                </div>
-                <div className="comment-reactions">
-                  <div className="comment-reaction">
-                    <i className="fa-solid fa-thumbs-up"></i> <span>32K</span>
-                  </div>
-                  <div className="comment-reaction">
-                    <span>Reply</span>
-                  </div>
-                </div>
-              </div>
-              <div className="comment box-shadow">
-                <i
-                  className="fa fa-ellipsis-vertical"
-                  style={{ float: "right" }}
-                ></i>
-                <div className="comment-top">
-                  <img
-                    src="https://th.bing.com/th/id/OIP.Afk9XWKAozdV1F0NBdd4SgAAAA?rs=1&pid=ImgDetMain"
-                    alt="pic"
-                  />
-                  <div className="commenter-details">
-                    <b>Mark Zuckerberg</b>
-                    <span>5 days ago</span>
-                  </div>
-                </div>
-                <div className="comment-text">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Suscipit, quia! Quia similique repellendus quasi quae, a
-                  voluptatibus, molestias dolores corrupti labore id, nostrum
-                  aut earum! Provident debitis sunt autem iusto?
-                </div>
-                <div className="comment-reactions">
-                  <div className="comment-reaction">
-                    <i className="fa-solid fa-thumbs-up"></i> <span>32K</span>
-                  </div>
-                  <div className="comment-reaction">
-                    <span>Reply</span>
-                  </div>
-                </div>
-              </div>
-              <div className="comment box-shadow">
-                <i
-                  className="fa fa-ellipsis-vertical"
-                  style={{ float: "right" }}
-                ></i>
-                <div className="comment-top">
-                  <img
-                    src="https://th.bing.com/th/id/OIP.Afk9XWKAozdV1F0NBdd4SgAAAA?rs=1&pid=ImgDetMain"
-                    alt="pic"
-                  />
-                  <div className="commenter-details">
-                    <b>Mark Zuckerberg</b>
-                    <span>5 days ago</span>
-                  </div>
-                </div>
-                <div className="comment-text">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Suscipit, quia! Quia similique repellendus quasi quae, a
-                  voluptatibus, molestias dolores corrupti labore id, nostrum
-                  aut earum! Provident debitis sunt autem iusto?
-                </div>
-                <div className="comment-reactions">
-                  <div className="comment-reaction">
-                    <i className="fa-solid fa-thumbs-up"></i> <span>32K</span>
-                  </div>
-                  <div className="comment-reaction">
-                    <span>Reply</span>
-                  </div>
-                </div>
-              </div>
-              <div className="comment box-shadow">
-                <i
-                  className="fa fa-ellipsis-vertical"
-                  style={{ float: "right" }}
-                ></i>
-                <div className="comment-top">
-                  <img
-                    src="https://th.bing.com/th/id/OIP.Afk9XWKAozdV1F0NBdd4SgAAAA?rs=1&pid=ImgDetMain"
-                    alt="pic"
-                  />
-                  <div className="commenter-details">
-                    <b>Mark Zuckerberg</b>
-                    <span>5 days ago</span>
-                  </div>
-                </div>
-                <div className="comment-text">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Suscipit, quia! Quia similique repellendus quasi quae, a
-                  voluptatibus, molestias dolores corrupti labore id, nostrum
-                  aut earum! Provident debitis sunt autem iusto?
-                </div>
-                <div className="comment-reactions">
-                  <div className="comment-reaction">
-                    <i className="fa-solid fa-thumbs-up"></i> <span>32K</span>
-                  </div>
-                  <div className="comment-reaction">
-                    <span>Reply</span>
-                  </div>
-                </div>
-              </div>
+              ))}
+              {(!post.comments || post.comments.length === 0) && (
+                <div style={{ color: "#999", textAlign: "center", padding: "20px 0" }}>No comments yet</div>
+              )}
             </div>
           </div>
         </div>

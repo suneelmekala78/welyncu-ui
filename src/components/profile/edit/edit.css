@@ -188,3 +188,37 @@
 .skills-flex .skill-rating{
   padding-bottom: 20px;
 }
+
+/*========== Edit Responsive ==============*/
+@media (max-width: 768px) {
+  .popup-container {
+    min-width: unset;
+    width: 95vw;
+    max-width: 95vw;
+    padding: 15px;
+  }
+  .profile-pic-edit-section .banner-edit-top img {
+    width: 100%;
+    height: auto;
+  }
+  .about-text {
+    min-height: 200px;
+  }
+  .profile-pic-edit-section .profile-pic-edit-bottom {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-container {
+    padding: 10px;
+  }
+  .profile-pic-edit-section .profile-pic-edit-top img {
+    width: 150px;
+    height: 150px;
+  }
+  .edit-top-title {
+    font-size: 17px;
+  }
+}

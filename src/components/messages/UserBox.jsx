@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { getUserInfo } from "../../helper/apis";
+import { useDispatch } from "react-redux";
 
-const UserBox = ({ con, userId, token, setCurrentChat }) => {
+const UserBox = ({
+  con,
+  userId,
+  isOnline,
+  isActive,
+  setCurrentChat,
+  setCurrentChatUser,
+}) => {
+  const dispatch = useDispatch();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchFriendInfo = async () => {
       const friendId = con.members.find((m) => m !== userId);
       try {
-        const friend = await getUserInfo(token, friendId);
+        const friend = await getUserInfo(friendId, dispatch);
         setUser(friend);
       } catch (error) {
         console.error("Error fetching friend info:", error);
@@ -20,10 +29,25 @@ const UserBox = ({ con, userId, token, setCurrentChat }) => {
     }
   }, [userId, con]);
 
+  const handleSelectChat = () => {
+    setCurrentChat(con);
+    setCurrentChatUser(user);
+  };
+
   return (
-    <div className="messages-user" onClick={() => setCurrentChat(con)}>
+    <div
+      className={isActive ? "messages-user messages-user-active" : "messages-user"}
+      onClick={handleSelectChat}
+    >
       <div className="messages-user-img">
         <img src={user?.profileUrl} alt="profile-pic" />
+        <span
+          className={
+            isOnline
+              ? "messages-user-online-status"
+              : "messages-user-offline-status"
+          }
+        ></span>
         <div className="messages-user-titles">
           <span className="messages-user-name">{user?.fullName}</span>
           <span className="messages-user-headline">
@@ -32,7 +56,7 @@ const UserBox = ({ con, userId, token, setCurrentChat }) => {
         </div>
       </div>
       <div className="messages-user-time">
-        <span>09:29 AM</span>
+        <span>{isOnline ? "Online" : "Offline"}</span>
       </div>
     </div>
   );

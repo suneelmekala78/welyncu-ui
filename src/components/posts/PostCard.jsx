@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./posts.css";
-import { deletePost } from "../../helper/apis";
+import { deletePost, likePostApi, commentPostApi, editPostApi, editCommentApi, deleteCommentApi, reportPostApi, reportCommentApi } from "../../helper/apis";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import moment from "moment";
@@ -14,6 +14,17 @@ const PostCard = ({ post, getPosts }) => {
   const [moreBtn, setMoreBtn] = useState(false);
   const [media, setMedia] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [isMuted, setIsMuted] = useState(true);
+  const [editingPost, setEditingPost] = useState(false);
+  const [editCaption, setEditCaption] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editCommentText, setEditCommentText] = useState("");
+  const [commentMenuId, setCommentMenuId] = useState(null);
   const maxLines = 2;
   const videoRefs = useRef([]);
   
@@ -53,8 +64,85 @@ const PostCard = ({ post, getPosts }) => {
     }
   };
 
+  const handlePostEdit = async () => {
+    try {
+      const res = await editPostApi(post?._id, editCaption);
+      if (res?.status === "success") {
+        toast.success("Post updated");
+        setEditingPost(false);
+        getPosts();
+      } else {
+        toast.error(res?.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlePostReport = async () => {
+    try {
+      const res = await reportPostApi(post?._id, "Inappropriate content");
+      if (res?.status === "success") {
+        toast.success(res?.message);
+      }
+      setMoreBtn(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCommentEdit = async (commentId) => {
+    if (!editCommentText.trim()) return;
+    try {
+      const res = await editCommentApi(post?._id, commentId, editCommentText.trim());
+      if (res?.status === "success") {
+        setComments(res.data.comments);
+        setEditingCommentId(null);
+        setEditCommentText("");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCommentDelete = async (commentId) => {
+    try {
+      const res = await deleteCommentApi(post?._id, commentId);
+      if (res?.status === "success") {
+        setComments(res.data.comments);
+        toast.success("Comment deleted");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCommentReport = async (commentId) => {
+    try {
+      const res = await reportCommentApi(post?._id, commentId);
+      if (res?.status === "success") {
+        toast.success(res?.message);
+      }
+      setCommentMenuId(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const toggleMute = () => {
+    setIsMuted((prev) => {
+      videoRefs.current.forEach((v) => {
+        if (v) v.muted = !prev;
+      });
+      return !prev;
+    });
+  };
+
   useEffect(() => {
     setMedia(post?.media || []);
+    setLiked(post?.likes?.some((lid) => lid === user?._id || lid?._id === user?._id) || false);
+    setLikeCount(post?.likes?.length || 0);
+    setComments(post?.comments || []);
 
     const observers = [];
 
@@ -133,21 +221,31 @@ const PostCard = ({ post, getPosts }) => {
             }
           >
             {post?.user?._id === user?._id && (
-              <div className="more-item cp p-10">
-                <i className="fa fa-pen-to-square"></i> <span>Edit</span>
-              </div>
+              <>
+                <div
+                  className="more-item cp p-10"
+                  onClick={() => {
+                    setEditCaption(post?.caption || "");
+                    setEditingPost(true);
+                    setMoreBtn(false);
+                  }}
+                >
+                  <i className="fa fa-pen"></i> <span>Edit</span>
+                </div>
+                <div
+                  className="more-item cp p-10"
+                  onClick={() => handlePostDelete(post?._id)}
+                >
+                  <i className="fa fa-trash"></i> <span>Delete</span>
+                </div>
+              </>
             )}
             {post?.user?._id !== user?._id && (
-              <div className="more-item cp p-10">
-                <i className="fa fa-flag"></i> <span>Report</span>
-              </div>
-            )}
-            {post?.user?._id === user?._id && (
               <div
                 className="more-item cp p-10"
-                onClick={() => handlePostDelete(post?._id)}
+                onClick={handlePostReport}
               >
-                <i className="fa fa-trash"></i> <span>Delete</span>
+                <i className="fa fa-flag"></i> <span>Report</span>
               </div>
             )}
           </div>
@@ -222,35 +320,150 @@ const PostCard = ({ post, getPosts }) => {
                     ref={(el) => (videoRefs.current[index] = el)}
                     autoPlay
                     loop
-                    muted={true} // Start muted; unmute on scroll
-                    // controls
+                    muted={isMuted}
+                    controls
                   ></video>
                 )}
-                {p?.mediaType === "video" && (
-                  <i class="fa-solid fa-volume-high"></i>
-                )}
+              </div>
+            ))}
+
+            {post?.media?.some((p) => p.mediaType === "video") && (
+              <i
+                className={isMuted ? "fa-solid fa-volume-xmark" : "fa-solid fa-volume-high"}
+                onClick={toggleMute}
+                style={{ zIndex: 5 }}
+              ></i>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="post-card-bottom">
+        <div className="post-stats">
+          {likeCount > 0 && <span>{likeCount} {likeCount === 1 ? "like" : "likes"}</span>}
+          {comments.length > 0 && <span className="cp" onClick={() => setShowComments(!showComments)}>{comments.length} {comments.length === 1 ? "comment" : "comments"}</span>}
+        </div>
+        <div className="post-btns">
+          <div className={`post-btn ${liked ? "post-btn-active" : ""}`} onClick={async () => {
+            setLiked(!liked);
+            setLikeCount((p) => liked ? p - 1 : p + 1);
+            await likePostApi(post?._id);
+          }}>
+            <i className={liked ? "fa-solid fa-heart" : "fa-regular fa-heart"}></i>
+            <span>Like</span>
+          </div>
+          <div className="post-btn" onClick={() => setShowComments(!showComments)}>
+            <i className="fa-regular fa-comment"></i>
+            <span>Comment</span>
+          </div>
+          <div className="post-btn">
+            <i className="fa fa-share"></i>
+            <span>Share</span>
+          </div>
+        </div>
+        {showComments && (
+          <div className="post-comments-section">
+            <div className="post-comment-input">
+              <img src={user?.profileUrl || "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"} alt="me" />
+              <input
+                type="text"
+                placeholder="Write a comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                onKeyDown={async (e) => {
+                  if (e.key === "Enter" && commentText.trim()) {
+                    const res = await commentPostApi(post?._id, commentText.trim());
+                    if (res?.status === "success") {
+                      setComments(res.data.comments);
+                      setCommentText("");
+                    }
+                  }
+                }}
+              />
+            </div>
+            {comments.map((c, i) => (
+              <div key={c._id || i} className="post-comment-item">
+                <img src={c.user?.profileUrl || "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"} alt="" />
+                <div className="post-comment-body">
+                  <div className="post-comment-header">
+                    <b>{c.user?.fullName}</b>
+                    <div className="post-comment-actions-wrap">
+                      <i className="fa fa-ellipsis-vertical post-comment-menu-btn" onClick={() => setCommentMenuId(commentMenuId === c._id ? null : c._id)}></i>
+                      {commentMenuId === c._id && (
+                        <div className="post-comment-menu box-shadow">
+                          {c.user?._id === user?._id && (
+                            <>
+                              <div className="more-item cp p-10" onClick={() => { setEditingCommentId(c._id); setEditCommentText(c.text); setCommentMenuId(null); }}>
+                                <i className="fa fa-pen"></i> <span>Edit</span>
+                              </div>
+                              <div className="more-item cp p-10" onClick={() => { handleCommentDelete(c._id); setCommentMenuId(null); }}>
+                                <i className="fa fa-trash"></i> <span>Delete</span>
+                              </div>
+                            </>
+                          )}
+                          {post?.user?._id === user?._id && c.user?._id !== user?._id && (
+                            <div className="more-item cp p-10" onClick={() => { handleCommentDelete(c._id); setCommentMenuId(null); }}>
+                              <i className="fa fa-trash"></i> <span>Delete</span>
+                            </div>
+                          )}
+                          {c.user?._id !== user?._id && (
+                            <div className="more-item cp p-10" onClick={() => handleCommentReport(c._id)}>
+                              <i className="fa fa-flag"></i> <span>Report</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {editingCommentId === c._id ? (
+                    <div className="post-comment-edit-row">
+                      <input
+                        type="text"
+                        value={editCommentText}
+                        onChange={(e) => setEditCommentText(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCommentEdit(c._id)}
+                      />
+                      <i className="fa fa-check" onClick={() => handleCommentEdit(c._id)}></i>
+                      <i className="fa fa-times" onClick={() => setEditingCommentId(null)}></i>
+                    </div>
+                  ) : (
+                    <p>{c.text}</p>
+                  )}
+                  <span className="post-comment-time">{moment(c.createdAt).fromNow()}</span>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <div className="post-card-bottom">
-        <div className="post-btns">
-          <div className="post-btn">
-            <i className="fa-regular fa-heart"></i>
-            <span>19</span>
-          </div>
-          <div className="post-btn">
-            <i className="fa-regular fa-comment"></i>
-            <span>3</span>
-          </div>
-          <div className="post-btn">
-            <i className="fa fa-share"></i>
-            <span>5</span>
+      {/* Edit Post Popup */}
+      {editingPost && (
+        <div className="popup-section popup-section-active">
+          <div className="popup-container box-shadow p-15 post-upload-box">
+            <i className="fa fa-xmark" onClick={() => setEditingPost(false)}></i>
+            <div className="profile-top-details-edit-section">
+              <div className="profile-top-details-edit-top">
+                <div className="edit-top-title">Edit Post</div>
+              </div>
+              <textarea
+                className="about-text"
+                value={editCaption}
+                onChange={(e) => setEditCaption(e.target.value)}
+                placeholder="Edit your post..."
+              ></textarea>
+            </div>
+            <div className="profile-top-details-edit-bottom">
+              <div className="profile-top-details-edit-bottom-left"></div>
+              <div className="profile-top-details-edit-bottom-right">
+                <span className="save-btn btn-background" onClick={handlePostEdit}>
+                  Save
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

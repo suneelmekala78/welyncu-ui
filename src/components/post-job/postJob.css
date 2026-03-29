@@ -106,3 +106,30 @@ label{
     outline: none;
     resize: none;
 }
+
+/*========== Post Job Responsive ==============*/
+@media (max-width: 1300px) {
+  .post-job-page {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .post-job-page {
+    flex-direction: column;
+  }
+  .post-job-left {
+    width: 100%;
+    margin-right: 0;
+  }
+  .post-job-right {
+    width: 100%;
+    margin-top: 10px;
+  }
+  .screen-question-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

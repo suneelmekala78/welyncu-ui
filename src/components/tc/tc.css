@@ -98,6 +98,30 @@
   cursor: pointer;
 }
 
+/*========== TC Responsive ==============*/
+@media (max-width: 1300px) {
+  .tc-page {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tc-page {
+    flex-direction: column;
+  }
+  .tc-left {
+    width: 100%;
+  }
+  .tc-right {
+    width: 100%;
+    margin: 10px 0;
+  }
+  .tc-page .tc-left .tcl-top .tcl-top-title {
+    font-size: 28px !important;
+  }
+}
+
 .tc-right .tcr-list-item:hover {
   background-color: #f8f9fa;
 }

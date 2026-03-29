@@ -285,10 +285,75 @@
 /*========== Responsive ==============*/
 
 @media (max-width: 1300px) {
-  .company-profile-top-section{
-    width: 1300px;
+  .company-top-details {
+    width: 100%;
+    padding: 15px;
+  }
+  .company-main-section {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .company-main-section {
+    flex-direction: column;
+  }
+  .company-main-left,
+  .company-main-right {
+    display: none;
+  }
+  .company-main-mid {
+    width: 100%;
+    margin: 10px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .company-top-banner {
+    height: 200px;
   }
   .company-top-details {
-    padding: 0;
+    flex-direction: column;
+    text-align: center;
+  }
+  .company-details-left {
+    width: 100%;
+  }
+  .company-details-right {
+    margin-top: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .company-details-right .company-profile-topbtn {
+    margin: 5px;
+  }
+  .company-mid-top {
+    flex-wrap: wrap;
+  }
+  .company-mid-top .company-top-list-item {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .company-overview .company-overview-details .overview-details-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .company-overview .company-overview-details .overview-details-item .overview-item-title {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+  .company-overview .company-overview-details .overview-details-item .overview-item-value {
+    width: 100%;
+  }
+  .company-locations .company-location {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .company-top-banner {
+    height: 150px;
   }
 }
