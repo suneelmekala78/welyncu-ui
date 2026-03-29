@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "../components/startups/startups.css";
 import TopNav from "../components/topnav/TopNav";
@@ -8,13 +8,17 @@ import {
   upvoteStartupApi,
   commentOnStartupApi,
   followStartupApi,
+  deleteStartupApi,
 } from "../helper/apis";
+import { toast } from "react-toastify";
 
 const StartupDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   const [startup, setStartup] = useState(null);
   const [commentText, setCommentText] = useState("");
+  const isOwner = startup?.user?._id === user?._id || startup?.user === user?._id;
 
   useEffect(() => {
     const fetch = async () => {
@@ -62,6 +66,17 @@ const StartupDetail = () => {
     if (res?.status === "success") {
       setStartup((prev) => ({ ...prev, comments: res.comments }));
       setCommentText("");
+    }
+  };
+
+  const handleDeleteStartup = async () => {
+    if (!window.confirm("Are you sure you want to delete this startup?")) return;
+    const res = await deleteStartupApi(id);
+    if (res?.status === "success") {
+      toast.success("Startup deleted");
+      navigate("/startups");
+    } else {
+      toast.error(res?.message || "Failed to delete");
     }
   };
 
@@ -127,6 +142,11 @@ const StartupDetail = () => {
                   <i className={isFollowing ? "fa fa-check" : "fa fa-plus"}></i>{" "}
                   {isFollowing ? "Following" : "Follow"}
                 </button>
+                {isOwner && (
+                  <button className="action-btn" onClick={handleDeleteStartup} style={{ color: "#e53935" }}>
+                    <i className="fa fa-trash"></i> Delete
+                  </button>
+                )}
               </div>
             </div>
             <div className="startup-detail-badges">

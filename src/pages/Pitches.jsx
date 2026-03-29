@@ -8,8 +8,10 @@ import {
   getMyPitchesApi,
   likePitchApi,
   commentOnPitchApi,
+  deletePitchApi,
 } from "../helper/apis";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Pitches = () => {
   const navigate = useNavigate();
@@ -75,6 +77,18 @@ const Pitches = () => {
     }
   };
 
+  const handleDeletePitch = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this pitch?")) return;
+    const res = await deletePitchApi(id);
+    if (res?.status === "success") {
+      toast.success("Pitch deleted");
+      setPitches((prev) => prev.filter((p) => p._id !== id));
+      if (selectedPitch?._id === id) setSelectedPitch(null);
+    } else {
+      toast.error(res?.message || "Failed to delete");
+    }
+  };
+
   const pitchTypes = [
     { value: "", label: "All Types" },
     { value: "startup", label: "Startup" },
@@ -122,6 +136,9 @@ const Pitches = () => {
                     <video src={p.videoUrl} muted preload="metadata" />
                     <span className="pitch-type-badge">{p.pitchType}</span>
                     <i className="fa fa-play pitch-play-icon"></i>
+                    {p.user?._id === user?._id && (
+                      <i className="fa fa-trash pitch-delete-icon" onClick={(e) => { e.stopPropagation(); handleDeletePitch(p._id); }}></i>
+                    )}
                     <div className="pitch-video-overlay">
                       <div className="pitch-card-title">{p.title}</div>
                       <div className="pitch-card-user">
@@ -183,6 +200,11 @@ const Pitches = () => {
                 >
                   <i className="fa fa-heart"></i> {selectedPitch.likes?.some((l) => (l._id || l) === user?._id) ? "Liked" : "Like"}
                 </button>
+                {selectedPitch.user?._id === user?._id && (
+                  <button onClick={() => handleDeletePitch(selectedPitch._id)} style={{ color: "#e53935" }}>
+                    <i className="fa fa-trash"></i> Delete
+                  </button>
+                )}
               </div>
 
               <div className="pitch-detail-stats">

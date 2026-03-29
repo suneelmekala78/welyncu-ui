@@ -6,6 +6,7 @@ import {
   getConversations,
   getMessages,
   sendMessage,
+  sendMessageWithMedia,
 } from "../../helper/apis";
 import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
@@ -77,10 +78,40 @@ const MessagesLeft = () => {
 
     socket.current.on("getMessage", (data) => {
       setArrivalMessage({
+        _id: data._id,
         sender: data.senderId,
         text: data.text,
+        mediaUrl: data.mediaUrl,
+        mediaType: data.mediaType,
         createdAt: Date.now(),
       });
+    });
+
+    // Real-time message edit
+    socket.current.on("messageEdited", ({ messageId, text }) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m._id === messageId ? { ...m, text, isEdited: true } : m
+        )
+      );
+    });
+
+    // Real-time message delete
+    socket.current.on("messageDeleted", ({ messageId }) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m._id === messageId ? { ...m, text: "", isDeleted: true, mediaUrl: null } : m
+        )
+      );
+    });
+
+    // Real-time message reaction
+    socket.current.on("messageReaction", ({ messageId, reactions }) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m._id === messageId ? { ...m, reactions } : m
+        )
+      );
     });
 
     socket.current.on("typing", ({ senderId }) => {
@@ -98,6 +129,9 @@ const MessagesLeft = () => {
         clearTimeout(typingTimeoutRef.current);
       }
       socket.current?.off("getMessage");
+      socket.current?.off("messageEdited");
+      socket.current?.off("messageDeleted");
+      socket.current?.off("messageReaction");
       socket.current?.off("typing");
       socket.current?.off("stopTyping");
       socket.current?.disconnect();
@@ -213,10 +247,13 @@ const MessagesLeft = () => {
         (member) => member !== user?._id
       );
 
+      const res = await sendMessage(data, dispatch);
+
       socket.current.emit("sendMessage", {
         senderId: user?._id,
         receiverId,
         text: newMessage.trim(),
+        _id: res?.savedMessage?._id,
       });
 
       socket.current.emit("stopTyping", {
@@ -224,10 +261,35 @@ const MessagesLeft = () => {
         receiverId,
       });
 
-      const res = await sendMessage(data, dispatch);
       setMessages((prev) => [...prev, res.savedMessage]);
       setNewMessage("");
       setTypingUserId("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleMediaSubmit = async (file) => {
+    if (!file || !currentChat?._id || !user?._id) return;
+    try {
+      const formData = new FormData();
+      formData.append("media", file);
+      formData.append("sender", user?._id);
+      formData.append("conversationId", currentChat?._id);
+
+      const res = await sendMessageWithMedia(formData, dispatch);
+      if (res?.status === "success") {
+        const receiverId = currentChat.members.find((m) => m !== user?._id);
+        socket.current.emit("sendMessage", {
+          senderId: user?._id,
+          receiverId,
+          text: res.savedMessage.text,
+          mediaUrl: res.savedMessage.mediaUrl,
+          mediaType: res.savedMessage.mediaType,
+          _id: res.savedMessage._id,
+        });
+        setMessages((prev) => [...prev, res.savedMessage]);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -310,6 +372,7 @@ const MessagesLeft = () => {
               currentChat={currentChat}
               currentChatUser={currentChatUser}
               messages={messages}
+              setMessages={setMessages}
               isMessagesLoading={isMessagesLoading}
               isTyping={Boolean(
                 typingUserId &&
@@ -321,8 +384,10 @@ const MessagesLeft = () => {
               newMessage={newMessage}
               onTyping={handleTyping}
               handleSubmit={handleSubmit}
+              handleMediaSubmit={handleMediaSubmit}
               showBackButton={isMobileView}
               onBack={handleBackToConversationList}
+              socket={socket}
             />
           ) : (
             <div className="select-chat-section">

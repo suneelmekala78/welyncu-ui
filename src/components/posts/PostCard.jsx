@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import "./posts.css";
 import { deletePost, likePostApi, commentPostApi, editPostApi, editCommentApi, deleteCommentApi, reportPostApi, reportCommentApi } from "../../helper/apis";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,36 +19,117 @@ const PostCard = ({ post, getPosts }) => {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
-  const [isMuted, setIsMuted] = useState(true);
   const [editingPost, setEditingPost] = useState(false);
   const [editCaption, setEditCaption] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editCommentText, setEditCommentText] = useState("");
   const [commentMenuId, setCommentMenuId] = useState(null);
-  const maxLines = 2;
+  const [likeAnim, setLikeAnim] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState({});
+
+  // Custom video controls state
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [videoProgress, setVideoProgress] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [videoCurrentTime, setVideoCurrentTime] = useState(0);
+  const [showVideoControls, setShowVideoControls] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const maxLines = 3;
   const videoRefs = useRef([]);
-  
-  const handleToggle = () => {
-    setIsExpanded((prev) => !prev);
-  };
+  const mediaContainerRef = useRef(null);
+  const controlsTimeoutRef = useRef(null);
+  const lastTapRef = useRef(0);
+
+  const handleToggle = () => setIsExpanded((prev) => !prev);
 
   const isTextLong = (text) => {
     if (!text) return false;
-    const lines = text.split("\n");
-    return lines.length > maxLines;
+    return text.split("\n").length > maxLines || text.length > 200;
   };
 
-  const PreviousPost = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? media.length - 1 : prevIndex - 1
-    );
+  const PreviousPost = (e) => {
+    e?.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? media.length - 1 : prev - 1));
   };
 
-  const NextPost = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === media.length - 1 ? 0 : prevIndex + 1
-    );
+  const NextPost = (e) => {
+    e?.stopPropagation();
+    setCurrentIndex((prev) => (prev === media.length - 1 ? 0 : prev + 1));
   };
+
+  // Double-tap to like
+  const handleDoubleTap = () => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 300) {
+      if (!liked) {
+        setLiked(true);
+        setLikeCount((p) => p + 1);
+        likePostApi(post?._id);
+      }
+      setLikeAnim(true);
+      setTimeout(() => setLikeAnim(false), 800);
+    }
+    lastTapRef.current = now;
+  };
+
+  // Video control helpers
+  const activeVideo = videoRefs.current[currentIndex];
+
+  const togglePlay = (e) => {
+    e?.stopPropagation();
+    if (!activeVideo) return;
+    if (activeVideo.paused) {
+      activeVideo.play().catch(() => {});
+      setIsPlaying(true);
+    } else {
+      activeVideo.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const toggleMute = (e) => {
+    e?.stopPropagation();
+    if (!activeVideo) return;
+    activeVideo.muted = !activeVideo.muted;
+    setIsMuted(activeVideo.muted);
+  };
+
+  const handleSeek = (e) => {
+    e.stopPropagation();
+    if (!activeVideo) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    activeVideo.currentTime = pct * activeVideo.duration;
+  };
+
+  const toggleFullscreen = (e) => {
+    e?.stopPropagation();
+    if (!mediaContainerRef.current) return;
+    if (!document.fullscreenElement) {
+      mediaContainerRef.current.requestFullscreen?.();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen?.();
+      setIsFullscreen(false);
+    }
+  };
+
+  const formatTime = (sec) => {
+    if (!sec || isNaN(sec)) return "0:00";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
+
+  const showControlsTemporarily = useCallback(() => {
+    setShowVideoControls(true);
+    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    controlsTimeoutRef.current = setTimeout(() => {
+      if (isPlaying) setShowVideoControls(false);
+    }, 3000);
+  }, [isPlaying]);
 
   const handlePostDelete = async (id) => {
     try {
@@ -129,72 +210,81 @@ const PostCard = ({ post, getPosts }) => {
     }
   };
 
-  const toggleMute = () => {
-    setIsMuted((prev) => {
-      videoRefs.current.forEach((v) => {
-        if (v) v.muted = !prev;
-      });
-      return !prev;
-    });
-  };
-
   useEffect(() => {
     setMedia(post?.media || []);
     setLiked(post?.likes?.some((lid) => lid === user?._id || lid?._id === user?._id) || false);
     setLikeCount(post?.likes?.length || 0);
     setComments(post?.comments || []);
+  }, [post, user?._id]);
 
+  // IntersectionObserver for auto-play/pause videos
+  useEffect(() => {
     const observers = [];
-
     videoRefs.current.forEach((video, index) => {
       if (video) {
         const handlePlayVideo = (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && index === currentIndex) {
               if (video.paused) {
-                video
-                  .play()
-                  .catch((error) =>
-                    console.error("Error playing video:", error)
-                  );
-                video.muted = false; // Unmute video when 60% in view
+                video.play().catch(() => {});
+                setIsPlaying(true);
               }
             } else {
               video.pause();
+              setIsPlaying(false);
             }
           });
         };
-
-        const observer = new IntersectionObserver(handlePlayVideo, {
-          threshold: 0.6, // 60% visibility
-        });
-
+        const observer = new IntersectionObserver(handlePlayVideo, { threshold: 0.6 });
         observer.observe(video);
         observers.push(observer);
       }
     });
-
     return () => {
-      observers.forEach((observer, index) => {
-        if (videoRefs.current[index])
-          observer.unobserve(videoRefs.current[index]);
+      observers.forEach((obs, i) => {
+        if (videoRefs.current[i]) obs.unobserve(videoRefs.current[i]);
       });
     };
-  }, [post, currentIndex]);
+  }, [media, currentIndex]);
+
+  // Video time updates
+  useEffect(() => {
+    const video = videoRefs.current[currentIndex];
+    if (!video) return;
+    const onTimeUpdate = () => {
+      setVideoCurrentTime(video.currentTime);
+      setVideoProgress(video.duration ? (video.currentTime / video.duration) * 100 : 0);
+    };
+    const onLoadMeta = () => setVideoDuration(video.duration);
+    const onEnded = () => { setIsPlaying(false); setShowVideoControls(true); };
+    video.addEventListener("timeupdate", onTimeUpdate);
+    video.addEventListener("loadedmetadata", onLoadMeta);
+    video.addEventListener("ended", onEnded);
+    return () => {
+      video.removeEventListener("timeupdate", onTimeUpdate);
+      video.removeEventListener("loadedmetadata", onLoadMeta);
+      video.removeEventListener("ended", onEnded);
+    };
+  }, [currentIndex, media]);
+
+  // Fullscreen change listener
+  useEffect(() => {
+    const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onFsChange);
+    return () => document.removeEventListener("fullscreenchange", onFsChange);
+  }, []);
+
+  const currentMedia = media[currentIndex];
+  const isVideo = currentMedia?.mediaType === "video";
 
   return (
     <div className="post-card-section">
+      {/* Header */}
       <div className="post-card-top">
         <div className="post-card-top-left">
-          <Link
-            to={`/profile/${post?.user?._id}`}
-            className="post-card-top-left-img"
-          >
+          <Link to={`/profile/${post?.user?._id}`} className="post-card-top-left-img">
             <img
-              src={
-                post?.user?.profileUrl ||
-                "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"
-              }
+              src={post?.user?.profileUrl || "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"}
               alt="profile-pic"
             />
           </Link>
@@ -203,48 +293,24 @@ const PostCard = ({ post, getPosts }) => {
               {post?.user?.fullName}
             </Link>
             <span className="person-title">{post?.user?.headline}</span>
-            <span className="posted-time">
-              {moment(post?.createdAt).fromNow()}
-            </span>
+            <span className="posted-time">{moment(post?.createdAt).fromNow()}</span>
           </div>
         </div>
-        <div
-          className="post-card-top-right more-btn"
-          onClick={() => setMoreBtn(!moreBtn)}
-        >
+        <div className="post-card-top-right more-btn" onClick={() => setMoreBtn(!moreBtn)}>
           <i className="fa fa-ellipsis-vertical"></i>
-          <div
-            className={
-              moreBtn
-                ? "more-container more-container-active box-shadow"
-                : "more-container box-shadow"
-            }
-          >
+          <div className={moreBtn ? "more-container more-container-active box-shadow" : "more-container box-shadow"}>
             {post?.user?._id === user?._id && (
               <>
-                <div
-                  className="more-item cp p-10"
-                  onClick={() => {
-                    setEditCaption(post?.caption || "");
-                    setEditingPost(true);
-                    setMoreBtn(false);
-                  }}
-                >
+                <div className="more-item cp p-10" onClick={() => { setEditCaption(post?.caption || ""); setEditingPost(true); setMoreBtn(false); }}>
                   <i className="fa fa-pen"></i> <span>Edit</span>
                 </div>
-                <div
-                  className="more-item cp p-10"
-                  onClick={() => handlePostDelete(post?._id)}
-                >
+                <div className="more-item cp p-10" onClick={() => handlePostDelete(post?._id)}>
                   <i className="fa fa-trash"></i> <span>Delete</span>
                 </div>
               </>
             )}
             {post?.user?._id !== user?._id && (
-              <div
-                className="more-item cp p-10"
-                onClick={handlePostReport}
-              >
+              <div className="more-item cp p-10" onClick={handlePostReport}>
                 <i className="fa fa-flag"></i> <span>Report</span>
               </div>
             )}
@@ -252,96 +318,151 @@ const PostCard = ({ post, getPosts }) => {
         </div>
       </div>
 
+      {/* Caption */}
       <div className="post-card-mid">
-        <div className="post-description">
-          <pre className="custom-pre see-more">
-            {isExpanded || !isTextLong(post?.caption)
-              ? post?.caption
-              : post?.caption.split("\n").slice(0, maxLines).join("\n")}
-            {isTextLong(post?.caption) && (
-              <span className="cp see-more-btn" onClick={handleToggle}>
-                {isExpanded ? "...see less" : "...see more"}
-              </span>
-            )}
-          </pre>
-        </div>
+        {post?.caption && (
+          <div className="post-description">
+            <pre className="custom-pre see-more">
+              {isExpanded || !isTextLong(post?.caption)
+                ? post?.caption
+                : post?.caption.split("\n").slice(0, maxLines).join("\n").substring(0, 200)}
+              {isTextLong(post?.caption) && (
+                <span className="cp see-more-btn" onClick={handleToggle}>
+                  {isExpanded ? " ...see less" : " ...see more"}
+                </span>
+              )}
+            </pre>
+          </div>
+        )}
 
-        {post?.media?.length > 0 && (
-          <div className="media-container">
-            {post?.media.length > 1 && (
+        {/* Media */}
+        {media.length > 0 && (
+          <div
+            className={`media-container ${isVideo ? "media-video-mode" : "media-image-mode"}`}
+            ref={mediaContainerRef}
+            onClick={handleDoubleTap}
+            onMouseMove={isVideo ? showControlsTemporarily : undefined}
+          >
+            {/* Like animation */}
+            {likeAnim && (
+              <div className="post-like-anim">
+                <i className="fa-solid fa-heart"></i>
+              </div>
+            )}
+
+            {/* Carousel arrows */}
+            {media.length > 1 && (
               <>
-                <i
-                  className="fa fa-angle-left"
-                  style={{ zIndex: 5 }}
-                  onClick={PreviousPost}
-                ></i>
-                <i
-                  className="fa fa-angle-right"
-                  style={{ zIndex: 5 }}
-                  onClick={NextPost}
-                ></i>
+                <div className="media-nav media-nav-left" onClick={PreviousPost}>
+                  <i className="fa fa-chevron-left"></i>
+                </div>
+                <div className="media-nav media-nav-right" onClick={NextPost}>
+                  <i className="fa fa-chevron-right"></i>
+                </div>
               </>
             )}
 
-            {post?.media.length > 1 && (
+            {/* Carousel counter */}
+            {media.length > 1 && (
+              <div className="media-counter">{currentIndex + 1} / {media.length}</div>
+            )}
+
+            {/* Carousel dots */}
+            {media.length > 1 && (
               <div className="post-dots">
-                {post.media.map((_, index) => (
+                {media.map((_, index) => (
                   <div
-                    className={
-                      currentIndex === index
-                        ? "post-dot active-dot"
-                        : "post-dot"
-                    }
-                    onClick={() => setCurrentIndex(index)}
+                    className={currentIndex === index ? "post-dot active-dot" : "post-dot"}
+                    onClick={(e) => { e.stopPropagation(); setCurrentIndex(index); }}
                     key={index}
                   ></div>
                 ))}
               </div>
             )}
 
-            {/* <i class="fa-solid fa-volume-xmark"></i> */}
-
-            {post?.media?.map((p, index) => (
+            {/* Media items */}
+            {media.map((p, index) => (
               <div
                 key={index}
-                className={currentIndex === index ? "no-styles" : "post-hidden"}
+                className={currentIndex === index ? "media-slide media-slide-active" : "media-slide"}
               >
                 {p?.mediaType === "image" && (
-                  <img
-                    src={p?.url}
-                    alt="post-img"
-                    className={`media-${post?.style}`}
-                  />
+                  <div className="post-image-wrapper">
+                    {!imageLoaded[index] && <div className="post-image-skeleton"></div>}
+                    <img
+                      src={p?.url}
+                      alt="post-img"
+                      className="post-image"
+                      onLoad={() => setImageLoaded((prev) => ({ ...prev, [index]: true }))}
+                      style={{ opacity: imageLoaded[index] ? 1 : 0 }}
+                    />
+                  </div>
                 )}
                 {p?.mediaType === "video" && (
                   <video
                     src={p?.url}
-                    className={`media-${post?.style}`}
+                    className="post-video"
                     ref={(el) => (videoRefs.current[index] = el)}
-                    autoPlay
                     loop
                     muted={isMuted}
-                    controls
+                    playsInline
+                    onClick={(e) => { e.stopPropagation(); togglePlay(e); }}
                   ></video>
                 )}
               </div>
             ))}
 
-            {post?.media?.some((p) => p.mediaType === "video") && (
-              <i
-                className={isMuted ? "fa-solid fa-volume-xmark" : "fa-solid fa-volume-high"}
-                onClick={toggleMute}
-                style={{ zIndex: 5 }}
-              ></i>
+            {/* Custom video controls */}
+            {isVideo && (
+              <div className={`video-controls ${showVideoControls ? "video-controls-visible" : ""}`}>
+                <div className="video-progress-bar" onClick={handleSeek}>
+                  <div className="video-progress-fill" style={{ width: `${videoProgress}%` }}>
+                    <div className="video-progress-thumb"></div>
+                  </div>
+                </div>
+                <div className="video-controls-row">
+                  <div className="video-controls-left">
+                    <button className="video-ctrl-btn" onClick={togglePlay}>
+                      <i className={isPlaying ? "fa fa-pause" : "fa fa-play"}></i>
+                    </button>
+                    <button className="video-ctrl-btn" onClick={toggleMute}>
+                      <i className={isMuted ? "fa-solid fa-volume-xmark" : "fa-solid fa-volume-high"}></i>
+                    </button>
+                    <span className="video-time">{formatTime(videoCurrentTime)} / {formatTime(videoDuration)}</span>
+                  </div>
+                  <div className="video-controls-right">
+                    <button className="video-ctrl-btn" onClick={toggleFullscreen}>
+                      <i className={isFullscreen ? "fa fa-compress" : "fa fa-expand"}></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Big play button overlay for paused video */}
+            {isVideo && !isPlaying && (
+              <div className="video-big-play" onClick={togglePlay}>
+                <i className="fa fa-play"></i>
+              </div>
             )}
           </div>
         )}
       </div>
 
+      {/* Footer */}
       <div className="post-card-bottom">
         <div className="post-stats">
-          {likeCount > 0 && <span>{likeCount} {likeCount === 1 ? "like" : "likes"}</span>}
-          {comments.length > 0 && <span className="cp" onClick={() => setShowComments(!showComments)}>{comments.length} {comments.length === 1 ? "comment" : "comments"}</span>}
+          {likeCount > 0 && (
+            <span>
+              <i className="fa-solid fa-heart" style={{ color: "#ff4d6d", marginRight: 4, fontSize: 12 }}></i>
+              {likeCount} {likeCount === 1 ? "like" : "likes"}
+            </span>
+          )}
+          {comments.length > 0 && (
+            <span className="cp" onClick={() => setShowComments(!showComments)}>
+              {comments.length} {comments.length === 1 ? "comment" : "comments"}
+            </span>
+          )}
         </div>
         <div className="post-btns">
           <div className={`post-btn ${liked ? "post-btn-active" : ""}`} onClick={async () => {
@@ -357,36 +478,57 @@ const PostCard = ({ post, getPosts }) => {
             <span>Comment</span>
           </div>
           <div className="post-btn">
-            <i className="fa fa-share"></i>
+            <i className="fa-regular fa-paper-plane"></i>
             <span>Share</span>
           </div>
         </div>
+
+        {/* Comments Section */}
         {showComments && (
           <div className="post-comments-section">
             <div className="post-comment-input">
               <img src={user?.profileUrl || "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"} alt="me" />
-              <input
-                type="text"
-                placeholder="Write a comment..."
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                onKeyDown={async (e) => {
-                  if (e.key === "Enter" && commentText.trim()) {
-                    const res = await commentPostApi(post?._id, commentText.trim());
-                    if (res?.status === "success") {
-                      setComments(res.data.comments);
-                      setCommentText("");
+              <div className="post-comment-input-wrap">
+                <input
+                  type="text"
+                  placeholder="Write a comment..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  onKeyDown={async (e) => {
+                    if (e.key === "Enter" && commentText.trim()) {
+                      const res = await commentPostApi(post?._id, commentText.trim());
+                      if (res?.status === "success") {
+                        setComments(res.data.comments);
+                        setCommentText("");
+                      }
                     }
-                  }
-                }}
-              />
+                  }}
+                />
+                {commentText.trim() && (
+                  <button className="comment-send-btn" onClick={async () => {
+                    if (commentText.trim()) {
+                      const res = await commentPostApi(post?._id, commentText.trim());
+                      if (res?.status === "success") {
+                        setComments(res.data.comments);
+                        setCommentText("");
+                      }
+                    }
+                  }}>
+                    <i className="fa fa-paper-plane"></i>
+                  </button>
+                )}
+              </div>
             </div>
             {comments.map((c, i) => (
               <div key={c._id || i} className="post-comment-item">
-                <img src={c.user?.profileUrl || "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"} alt="" />
+                <Link to={`/profile/${c.user?._id}`}>
+                  <img src={c.user?.profileUrl || "https://res.cloudinary.com/demmiusik/image/upload/v1711703262/s66xmxvaoqky3ipbxskj.jpg"} alt="" />
+                </Link>
                 <div className="post-comment-body">
                   <div className="post-comment-header">
-                    <b>{c.user?.fullName}</b>
+                    <Link to={`/profile/${c.user?._id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                      <b>{c.user?.fullName}</b>
+                    </Link>
                     <div className="post-comment-actions-wrap">
                       <i className="fa fa-ellipsis-vertical post-comment-menu-btn" onClick={() => setCommentMenuId(commentMenuId === c._id ? null : c._id)}></i>
                       {commentMenuId === c._id && (

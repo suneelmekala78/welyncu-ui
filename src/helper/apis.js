@@ -501,6 +501,121 @@ export const deleteStoryApi = async (id) => {
   }
 };
 
+export const likeStoryApi = async (id) => {
+  try {
+    const res = await apiRequest({
+      url: `/story/like/${id}`,
+      method: "PUT",
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const replyStoryApi = async (id, text) => {
+  try {
+    const res = await apiRequest({
+      url: `/story/reply/${id}`,
+      method: "POST",
+      data: { text },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getStoryViewersApi = async (id) => {
+  try {
+    const res = await apiRequest({
+      url: `/story/viewers/${id}`,
+      method: "GET",
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const votePollStoryApi = async (id, optionIndex) => {
+  try {
+    const res = await apiRequest({
+      url: `/story/poll-vote/${id}`,
+      method: "POST",
+      data: { optionIndex },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// ====== Messages Enhanced ======
+
+export const sendMessageWithMedia = async (formData, dispatch) => {
+  try {
+    const res = await API.post("/message/create", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    if (isAuthFailure(res?.data?.message)) handleSessionExpired(dispatch);
+    return res?.data;
+  } catch (error) {
+    console.log(error);
+    return { status: "fail", message: "Error sending message" };
+  }
+};
+
+export const editMessageApi = async (id, text) => {
+  try {
+    const res = await apiRequest({
+      url: `/message/edit/${id}`,
+      method: "PUT",
+      data: { text },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteMessageApi = async (id) => {
+  try {
+    const res = await apiRequest({
+      url: `/message/${id}`,
+      method: "DELETE",
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteMessageForMeApi = async (id) => {
+  try {
+    const res = await apiRequest({
+      url: `/message/for-me/${id}`,
+      method: "DELETE",
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const reactToMessageApi = async (id, emoji) => {
+  try {
+    const res = await apiRequest({
+      url: `/message/react/${id}`,
+      method: "PUT",
+      data: { emoji },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // ====== Connections ======
 
 export const getConnectionsList = async (dispatch) => {

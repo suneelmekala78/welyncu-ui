@@ -183,6 +183,10 @@
 
 /*--- Chat Box ---*/
 
+.messages-chatbox-section {
+    position: relative;
+}
+
 .messages-chatbox-section > .noChants{
     width: 900px;
     height: 88vh;
@@ -521,5 +525,527 @@
 
     .messages-chatbox-bottom {
         padding: 10px;
+    }
+}
+
+/* ========== ENHANCED CHAT FEATURES ========== */
+
+/* Message hover actions */
+.my-message,
+.user-message {
+    position: relative;
+}
+
+.msg-hover-actions {
+    position: absolute;
+    top: -8px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 5;
+}
+
+.my-message .msg-hover-actions {
+    left: -4px;
+}
+
+.user-message .msg-hover-actions {
+    right: -4px;
+}
+
+.my-message:hover .msg-hover-actions,
+.user-message:hover .msg-hover-actions {
+    opacity: 1;
+}
+
+.msg-hover-actions i {
+    font-size: 11px;
+    padding: 5px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #666;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    transition: color 0.2s, background 0.2s;
+}
+
+.msg-hover-actions i:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+/* Deleted message */
+.msg-deleted-text {
+    opacity: 0.5;
+    font-style: italic;
+    font-size: 12px;
+}
+
+.msg-deleted-text i {
+    margin-right: 4px;
+    font-size: 11px;
+}
+
+/* Edit form inline */
+.msg-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    min-width: 200px;
+}
+
+.msg-edit-form input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid rgba(0, 123, 255, 0.3);
+    border-radius: 8px;
+    outline: none;
+    font-size: 13px;
+    background: white;
+}
+
+.msg-edit-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.msg-edit-actions button {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.msg-edit-actions button[type="submit"] {
+    background: var(--blue);
+    color: white;
+}
+
+.msg-edit-actions button[type="button"] {
+    background: #eee;
+    color: #666;
+}
+
+/* Edited badge */
+.msg-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.msg-edited-badge {
+    font-size: 10px;
+    opacity: 0.5;
+    font-style: italic;
+}
+
+/* Media in messages */
+.msg-media {
+    margin-bottom: 6px;
+}
+
+.msg-media-img {
+    max-width: 260px;
+    max-height: 200px;
+    border-radius: 10px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.msg-media-video {
+    max-width: 260px;
+    max-height: 200px;
+    border-radius: 10px;
+}
+
+.msg-media-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 13px;
+}
+
+/* Reactions */
+.msg-reactions-row {
+    display: flex;
+    gap: 4px;
+    margin: -4px 10px 4px;
+    flex-wrap: wrap;
+}
+
+.msg-reactions-right {
+    justify-content: flex-end;
+}
+
+.msg-reactions-left {
+    justify-content: flex-start;
+}
+
+.msg-reaction-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 7px;
+    background: white;
+    border: 1px solid rgba(128, 128, 128, 0.15);
+    border-radius: 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.msg-reaction-chip:hover {
+    transform: scale(1.1);
+}
+
+.msg-reaction-chip small {
+    font-size: 10px;
+    color: #666;
+    margin-left: 1px;
+}
+
+.msg-reaction-mine {
+    border-color: var(--blue);
+    background: rgba(0, 123, 255, 0.06);
+}
+
+/* React picker dropdown */
+.msg-react-picker {
+    display: flex;
+    gap: 4px;
+    padding: 6px 10px;
+    background: white;
+    border-radius: 999px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: fit-content;
+    z-index: 20;
+    margin: 2px 10px 6px;
+}
+
+.msg-react-picker-right {
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.msg-react-picker span {
+    cursor: pointer;
+    font-size: 20px;
+    transition: transform 0.15s;
+    padding: 2px;
+}
+
+.msg-react-picker span:hover {
+    transform: scale(1.35);
+}
+
+/* Media preview bar */
+.msg-media-preview-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(0, 123, 255, 0.04);
+    border-top: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.msg-media-preview-thumb {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.msg-media-preview-file {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #666;
+}
+
+.msg-media-preview-file span {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.msg-media-preview-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.msg-media-send-btn {
+    padding: 6px 14px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.msg-media-cancel-btn {
+    padding: 6px 10px;
+    background: #eee;
+    color: #666;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+/* Emoji picker panel */
+.emoji-picker-panel {
+    position: absolute;
+    bottom: 70px;
+    left: 10px;
+    width: 320px;
+    max-height: 280px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.18);
+    z-index: 30;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.emoji-picker-header {
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+    padding: 0;
+}
+
+.emoji-picker-header::-webkit-scrollbar {
+    display: none;
+}
+
+.emoji-cat-tab {
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #888;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.emoji-cat-active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+    font-weight: 600;
+}
+
+.emoji-picker-grid {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 8px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.emoji-picker-grid::-webkit-scrollbar {
+    width: 4px;
+}
+
+.emoji-picker-grid::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.2);
+    border-radius: 4px;
+}
+
+.emoji-picker-item {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s, transform 0.15s;
+}
+
+.emoji-picker-item:hover {
+    background: rgba(0, 123, 255, 0.08);
+    transform: scale(1.15);
+}
+
+/* Chatbox bottom enhancements */
+.chatbox-emoji-toggle {
+    font-size: 16px !important;
+}
+
+.chatbox-send-btn {
+    background: var(--blue) !important;
+    color: white !important;
+}
+
+/* Context menu */
+.msg-context-menu {
+    position: fixed;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    min-width: 140px;
+    padding: 6px 0;
+    overflow: hidden;
+}
+
+.msg-context-item {
+    padding: 9px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #333;
+    transition: background 0.15s;
+}
+
+.msg-context-item:hover {
+    background: rgba(0, 123, 255, 0.06);
+}
+
+.msg-context-item i {
+    width: 16px;
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+}
+
+.msg-context-danger {
+    color: #e74c3c;
+}
+
+.msg-context-danger i {
+    color: #e74c3c;
+}
+
+/* Delete confirmation popup */
+.msg-delete-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.msg-delete-popup {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    width: 320px;
+    max-width: 90vw;
+    text-align: center;
+}
+
+.msg-delete-popup-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: #222;
+}
+
+.msg-delete-popup-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.msg-delete-btn {
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.msg-delete-btn:active {
+    transform: scale(0.98);
+}
+
+.msg-delete-forme {
+    background: #f0f4f8;
+    color: #333;
+}
+
+.msg-delete-forme:hover {
+    background: #e4e9ee;
+}
+
+.msg-delete-everyone {
+    background: #fde8e8;
+    color: #e74c3c;
+}
+
+.msg-delete-everyone:hover {
+    background: #fcd0d0;
+}
+
+.msg-delete-cancel {
+    background: transparent;
+    color: #888;
+    margin-top: 2px;
+}
+
+.msg-delete-cancel:hover {
+    background: #f7f7f7;
+}
+
+/* Mobile overrides for new features */
+@media (max-width: 768px) {
+    .emoji-picker-panel {
+        width: calc(100vw - 20px);
+        left: 10px;
+        bottom: 60px;
+    }
+
+    .msg-media-img {
+        max-width: 200px;
+    }
+
+    .msg-react-picker {
+        flex-wrap: wrap;
+        border-radius: 12px;
+        max-width: 90vw;
+    }
+
+    .msg-hover-actions {
+        opacity: 1;
     }
 }

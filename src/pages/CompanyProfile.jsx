@@ -35,6 +35,10 @@ const CompanyProfile = () => {
     }
   };
 
+  const handlePageUpdated = (updatedPage) => {
+    setPage((prev) => ({ ...prev, ...updatedPage }));
+  };
+
   if (!page) return <><TopNav /><div style={{padding: "40px", textAlign: "center"}}>Loading...</div></>;
 
   return (
@@ -42,7 +46,7 @@ const CompanyProfile = () => {
       <TopNav />
       <div className="company-profile-page">
         <div className="company-profile-top">
-            <CompanyProfileTop page={page} onFollow={handleFollow} user={user} />
+            <CompanyProfileTop page={page} onFollow={handleFollow} user={user} onPageUpdated={handlePageUpdated} />
         </div>
         <div className="company-profile-main">
             <CompanyMain page={page} />

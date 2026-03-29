@@ -16,12 +16,15 @@ const BACKGROUND_COLORS = [
 ];
 
 const StoryCreate = ({ onClose, onCreated }) => {
-  const [mode, setMode] = useState("image"); // "image" or "text"
+  const [mode, setMode] = useState("image"); // "image", "text", or "poll"
   const [text, setText] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#0a66c2");
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Poll state
+  const [pollQuestion, setPollQuestion] = useState("");
+  const [pollOptions, setPollOptions] = useState(["", ""]);
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
@@ -30,6 +33,24 @@ const StoryCreate = ({ onClose, onCreated }) => {
       setSelectedFile(file);
       setPreview(URL.createObjectURL(file));
     }
+  };
+
+  const addPollOption = () => {
+    if (pollOptions.length < 6) {
+      setPollOptions([...pollOptions, ""]);
+    }
+  };
+
+  const removePollOption = (idx) => {
+    if (pollOptions.length > 2) {
+      setPollOptions(pollOptions.filter((_, i) => i !== idx));
+    }
+  };
+
+  const updatePollOption = (idx, value) => {
+    const updated = [...pollOptions];
+    updated[idx] = value;
+    setPollOptions(updated);
   };
 
   const handleSubmit = async () => {
@@ -41,6 +62,17 @@ const StoryCreate = ({ onClose, onCreated }) => {
       toast.error("Please enter some text");
       return;
     }
+    if (mode === "poll") {
+      if (!pollQuestion.trim()) {
+        toast.error("Please enter a poll question");
+        return;
+      }
+      const validOptions = pollOptions.filter((o) => o.trim());
+      if (validOptions.length < 2) {
+        toast.error("At least 2 options are required");
+        return;
+      }
+    }
 
     setIsSubmitting(true);
     try {
@@ -50,6 +82,11 @@ const StoryCreate = ({ onClose, onCreated }) => {
       }
       if (mode === "text") {
         formData.append("text", text);
+        formData.append("backgroundColor", backgroundColor);
+      }
+      if (mode === "poll") {
+        formData.append("pollQuestion", pollQuestion);
+        formData.append("pollOptions", JSON.stringify(pollOptions.filter((o) => o.trim())));
         formData.append("backgroundColor", backgroundColor);
       }
 
@@ -90,6 +127,12 @@ const StoryCreate = ({ onClose, onCreated }) => {
           >
             <i className="fa fa-font"></i> Text
           </div>
+          <div
+            className={`story-tab ${mode === "poll" ? "active" : ""}`}
+            onClick={() => setMode("poll")}
+          >
+            <i className="fa fa-chart-bar"></i> Poll
+          </div>
         </div>
 
         <div className="story-create-body">
@@ -125,7 +168,7 @@ const StoryCreate = ({ onClose, onCreated }) => {
                 onChange={handleFileChange}
               />
             </div>
-          ) : (
+          ) : mode === "text" ? (
             <div className="story-text-create">
               <div
                 className="story-text-preview"
@@ -137,6 +180,50 @@ const StoryCreate = ({ onClose, onCreated }) => {
                   onChange={(e) => setText(e.target.value)}
                   maxLength={200}
                 />
+              </div>
+              <div className="story-color-picker">
+                {BACKGROUND_COLORS.map((color) => (
+                  <div
+                    key={color}
+                    className={`color-swatch ${backgroundColor === color ? "active" : ""}`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setBackgroundColor(color)}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="story-poll-create">
+              <div className="story-poll-preview" style={{ backgroundColor }}>
+                <input
+                  className="story-poll-question-input"
+                  type="text"
+                  placeholder="Ask a question..."
+                  value={pollQuestion}
+                  onChange={(e) => setPollQuestion(e.target.value)}
+                  maxLength={100}
+                />
+                <div className="story-poll-options-create">
+                  {pollOptions.map((opt, idx) => (
+                    <div key={idx} className="story-poll-option-input-wrap">
+                      <input
+                        type="text"
+                        placeholder={`Option ${idx + 1}`}
+                        value={opt}
+                        onChange={(e) => updatePollOption(idx, e.target.value)}
+                        maxLength={50}
+                      />
+                      {pollOptions.length > 2 && (
+                        <i className="fa fa-xmark" onClick={() => removePollOption(idx)}></i>
+                      )}
+                    </div>
+                  ))}
+                  {pollOptions.length < 6 && (
+                    <button className="story-poll-add-option" onClick={addPollOption}>
+                      <i className="fa fa-plus"></i> Add Option
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="story-color-picker">
                 {BACKGROUND_COLORS.map((color) => (
