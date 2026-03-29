@@ -48,6 +48,7 @@ const ProfilePages = ({ user }) => {
       fetchMyPages();
       if (isOwnProfile) fetchFollowingPages();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?._id]);
 
   const activePagesData = tab === "my" ? myPages : followingPages;

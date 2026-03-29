@@ -72,6 +72,7 @@ const StoryCard = ({ storyView, setStoryView, activeStoryGroup, onRefresh }) => 
       clearInterval(intervalRef.current);
       clearTimeout(timerRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyView, currentIndex, stories.length, paused]);
 
   // Reset index when opening a new group
@@ -82,6 +83,7 @@ const StoryCard = ({ storyView, setStoryView, activeStoryGroup, onRefresh }) => 
       setShowReplies(false);
       setReplyText("");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeStoryGroup]);
 
   const goNext = useCallback(() => {

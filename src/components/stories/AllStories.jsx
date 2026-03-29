@@ -23,6 +23,7 @@ const AllStories = ({ setStoryView, setActiveStoryGroup }) => {
 
   useEffect(() => {
     fetchStories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleStoryClick = (group) => {

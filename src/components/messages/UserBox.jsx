@@ -27,7 +27,7 @@ const UserBox = ({
     if (userId && con) {
       fetchFriendInfo(); 
     }
-  }, [userId, con]);
+  }, [userId, con]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelectChat = () => {
     setCurrentChat(con);

@@ -28,6 +28,7 @@ const QuizGame = () => {
   const [gameOver, setGameOver] = useState(false);
   const [gameResult, setGameResult] = useState(null);
   const [opponentAnswered, setOpponentAnswered] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [waitingForNext, setWaitingForNext] = useState(false);
 
   const timerRef = useRef(null);
@@ -52,6 +53,7 @@ const QuizGame = () => {
       }
     };
     loadGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId, user?._id]);
 
   useEffect(() => {
@@ -82,6 +84,7 @@ const QuizGame = () => {
     }, 1000);
 
     return () => clearInterval(timerRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentQ, gameOver, questions.length]);
 
   // Socket listeners

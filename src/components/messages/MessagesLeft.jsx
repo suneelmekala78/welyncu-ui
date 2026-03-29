@@ -136,6 +136,7 @@ const MessagesLeft = () => {
       socket.current?.off("stopTyping");
       socket.current?.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -327,6 +328,7 @@ const MessagesLeft = () => {
     if (user?._id) {
       Conversations();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, dispatch]);
 
   const handleBackToConversationList = () => {

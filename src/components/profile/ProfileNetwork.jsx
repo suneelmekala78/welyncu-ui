@@ -32,6 +32,7 @@ const ProfileNetwork = ({ user }) => {
 
   useEffect(() => {
     if (user?._id) fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?._id]);
 
   const filteredConnections = search

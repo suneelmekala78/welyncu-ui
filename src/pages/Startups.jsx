@@ -33,6 +33,7 @@ const Startups = () => {
   useEffect(() => {
     if (tab === "all") fetchStartups();
     else fetchMyStartups();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, sort]);
 
   const onSearch = () => {

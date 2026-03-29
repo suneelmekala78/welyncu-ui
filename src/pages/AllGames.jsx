@@ -38,6 +38,7 @@ const AllGames = () => {
     loadPending();
     loadRecentGames();
     refreshCoins();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -66,6 +67,7 @@ const AllGames = () => {
       socket.off("gameStarted", handleGameStarted);
       window.removeEventListener("focus", handleFocus);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const refreshCoins = async () => {

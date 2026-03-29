@@ -37,6 +37,7 @@ const Pitches = () => {
   useEffect(() => {
     if (tab === "all") fetchPitches();
     else fetchMyPitches();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, filter]);
 
   const handleLike = async (id) => {

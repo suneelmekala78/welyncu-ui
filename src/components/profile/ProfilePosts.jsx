@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getUserPostsApi } from "../../helper/apis";
+// eslint-disable-next-line no-unused-vars
 import PostCard from "../posts/PostCard";
 import Loader from "../loaders/Loader";
 
@@ -25,6 +26,7 @@ const ProfilePosts = ({ user }) => {
 
   useEffect(() => {
     fetchPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?._id]);
 
   const filteredPosts =

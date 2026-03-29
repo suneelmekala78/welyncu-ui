@@ -59,6 +59,7 @@ const RPSGame = () => {
         navigate("/games");
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId, user?._id]);
 
   useEffect(() => {

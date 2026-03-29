@@ -31,6 +31,7 @@ const Jobs = () => {
   useEffect(() => {
     if (tab === "jobs") fetchJobs();
     else fetchMyJobs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 
   const onSearch = () => {

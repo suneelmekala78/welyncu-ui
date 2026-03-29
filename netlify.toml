@@ -1,6 +1,6 @@
 # Netlify configuration for WeLyncu Client
 [build]
-  command = "npm run build"
+  command = "CI=false npm run build"
   publish = "build"
 
 # SPA routing — redirect all requests to index.html

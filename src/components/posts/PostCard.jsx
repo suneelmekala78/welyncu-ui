@@ -240,9 +240,10 @@ const PostCard = ({ post, getPosts }) => {
         observers.push(observer);
       }
     });
+    const currentVideoRefs = videoRefs.current;
     return () => {
       observers.forEach((obs, i) => {
-        if (videoRefs.current[i]) obs.unobserve(videoRefs.current[i]);
+        if (currentVideoRefs[i]) obs.unobserve(currentVideoRefs[i]);
       });
     };
   }, [media, currentIndex]);

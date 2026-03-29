@@ -89,6 +89,7 @@ const Connect4Game = () => {
       }
     };
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId, user?._id]);
 
   useEffect(() => {
@@ -145,6 +146,7 @@ const Connect4Game = () => {
       if (result.cells.length) setWinCells(result.cells);
       finishTheGame(result.winner === "draw", result.winner === myColor ? user?._id : result.winner === "draw" ? null : opponent?._id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMyTurn, gameOver, board, myColor, gameId, opponent, user]);
 
   const finishTheGame = async (isDraw, winnerId) => {

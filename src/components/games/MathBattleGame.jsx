@@ -25,6 +25,7 @@ const MathBattleGame = () => {
   const [submitted, setSubmitted] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [myCorrect, setMyCorrect] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [oppAnswered, setOppAnswered] = useState(false);
   const [timer, setTimer] = useState(TIMER_SECONDS);
   const [opponent, setOpponent] = useState(null);
@@ -50,6 +51,7 @@ const MathBattleGame = () => {
         navigate("/games");
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId, user?._id]);
 
   useEffect(() => {
@@ -74,6 +76,7 @@ const MathBattleGame = () => {
     }, 1000);
 
     return () => clearInterval(timerRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentQ, gameOver, questions.length]);
 
   // Focus input on new question

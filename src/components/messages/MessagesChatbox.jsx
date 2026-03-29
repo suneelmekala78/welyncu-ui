@@ -6,6 +6,7 @@ import {
   deleteMessageForMeApi,
   reactToMessageApi,
 } from "../../helper/apis";
+// eslint-disable-next-line no-unused-vars
 import { toast } from "react-toastify";
 
 const QUICK_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "😡", "🔥", "👏"];

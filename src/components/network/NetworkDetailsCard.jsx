@@ -28,6 +28,7 @@ const NetworkDetailsCard = () => {
 
   useEffect(() => {
     fetchStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

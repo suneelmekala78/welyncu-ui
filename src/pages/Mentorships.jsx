@@ -55,6 +55,7 @@ const Mentorships = () => {
 
   useEffect(() => {
     fetchMentorships();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, industry, sessionType, priceFilter]);
 
   const openDetail = async (id) => {

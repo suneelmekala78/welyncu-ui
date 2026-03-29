@@ -66,6 +66,7 @@ const TicTocToe = () => {
       }
     };
     loadGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId, user?._id]);
 
   // Socket: register user

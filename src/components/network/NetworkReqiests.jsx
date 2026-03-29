@@ -63,6 +63,7 @@ const NetworkReqiests = ({ getUserData, onAccept }) => {
 
   useEffect(() => {
     getRequests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
